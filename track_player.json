@@ -1,0 +1,9 @@
+{
+  "exoplayer": false,
+  "cache": false,
+  "dash": false,
+  "hls": false,
+  "smoothstreaming": false,
+  "castApplicationId": null,
+  "auto": true
+}

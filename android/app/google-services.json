@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "44635103582",
+    "firebase_url": "https://goc-app-6efe2.firebaseio.com",
+    "project_id": "goc-app-6efe2",
+    "storage_bucket": "goc-app-6efe2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:44635103582:android:2ea1fd05dfe7f708",
+        "android_client_info": {
+          "package_name": "com.goc.GOC"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "44635103582-b6ehi0at5c576ijl33skbeovrq7ti9bt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjp9zQ6Oo_Dhyfw7yoYC-dk57LAKDMHDg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
