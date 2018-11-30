@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest"
+    "test": "jest",
+    "android-linux": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && react-native run-android"
   },
   "dependencies": {
     "@shoutem/ui": "^0.23.4",
@@ -16,6 +17,7 @@
     "react-native-svg": "^8.0.8",
     "react-native-text-ticker": "^0.13.0",
     "react-native-track-player": "^1.0.0",
+    "react-native-view-transformer": "0.0.28",
     "react-navigation": "^2.18.1"
   },
   "devDependencies": {

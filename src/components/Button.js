@@ -4,8 +4,8 @@ import { variables } from '../theme';
 
 export default class Button extends Component {
   render() {
+
     const style = {
-      ...this.props.style,
       backgroundColor: this.props.clear ? 'transparent' : variables.primary,
       borderColor: this.props.clear ? variables.primary : 'transparent',
       borderWidth: this.props.clear ? 1 : 0,
@@ -14,6 +14,7 @@ export default class Button extends Component {
       paddingVertical: 15,
       width: '100%',
       height: 50,
+      ...this.props.style,
     };
     delete style.underlayColor;
     return (

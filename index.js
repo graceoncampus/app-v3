@@ -7,7 +7,7 @@ import {
   AsyncStorage,
   Platform,
 } from 'react-native';
-// import TrackPlayer from 'react-native-track-player';
+import TrackPlayer from 'react-native-track-player';
 import SplashScreen from 'react-native-splash-screen';
 import { createSwitchNavigator, createStackNavigator, createDrawerNavigator } from 'react-navigation';
 import firebase from 'react-native-firebase';
@@ -15,8 +15,12 @@ import globalStyles, { variables } from './src/theme';
 import Login from './src/screens/Login';
 import Main from './src/screens/Home';
 import Sermons from './src/screens/Sermons';
+import events from './src/screens/Events/events';
+import event from './src/screens/Events/event';
+import classes from './src/screens/Classes/classes';
 import Post from './src/screens/Post';
 import EditPost from './src/screens/EditPost';
+import Settings from './src/screens/Settings/settings';
 import { saveToken } from './src/utils';
 import { Logo } from './src/icons';
 import registerAppListener from './src/listeners';
@@ -38,6 +42,19 @@ const sermonStack = createStackNavigator({
   Serm: { screen: Sermons },
 });
 
+const eventsStack = createStackNavigator({
+  Events: { screen: events },
+  Event: { screen: event },
+});
+
+const classesStack = createStackNavigator({
+  Classes: { screen: classes },
+})
+
+const settingsStack = createStackNavigator({
+  Setting: { screen: Settings }
+})
+
 const AppStack = createDrawerNavigator({
   Home: {
     screen: homeStack,
@@ -46,6 +63,18 @@ const AppStack = createDrawerNavigator({
     },
   },
   Sermons: sermonStack,
+  Events: {
+    screen: eventsStack,
+    navigationOptions: {
+      gesturesEnabled: false,
+    },
+  },
+  Classes: {
+    screen: classesStack,
+    navigationOptions: {
+      gesturesEnabled: false,
+    },
+  },
   // Connect: {
   //   screen: connectStack,
   //   navigationOptions: {
@@ -54,18 +83,6 @@ const AppStack = createDrawerNavigator({
   // },
   // Leadership: {
   //   screen: leadershipStack,
-  //   navigationOptions: {
-  //     gesturesEnabled: false,
-  //   },
-  // },
-  // Events: {
-  //   screen: eventsStack,
-  //   navigationOptions: {
-  //     gesturesEnabled: false,
-  //   },
-  // },
-  // Classes: {
-  //   screen: classesStack,
   //   navigationOptions: {
   //     gesturesEnabled: false,
   //   },
@@ -82,12 +99,12 @@ const AppStack = createDrawerNavigator({
   //     gesturesEnabled: false,
   //   },
   // },
-  // Settings: {
-  //   screen: settingsStack,
-  //   navigationOptions: {
-  //     gesturesEnabled: false,
-  //   },
-  // },
+  Settings: {
+    screen: settingsStack,
+    navigationOptions: {
+      gesturesEnabled: false,
+    },
+  },
 }, {
   drawerWidth: 160,
   contentOptions: {
@@ -177,21 +194,21 @@ const RootStack = createSwitchNavigator(
 
 AppRegistry.registerComponent('GOC', () => RootStack);
 
-// TrackPlayer.registerEventHandler(async (data) => {
-//   if (data.type === 'playback-track-changed') {
-//     if (data.nextTrack) {
-//       const { title, artist } = await TrackPlayer.getTrack(data.nextTrack);
-//       store.setState({ title, artist, id: data.nextTrack });
-//     }
-//   } else if (data.type === 'remote-play') {
-//     TrackPlayer.play();
-//   } else if (data.type === 'remote-pause') {
-//     TrackPlayer.pause();
-//   } else if (data.type === 'remote-next') {
-//     TrackPlayer.skipToNext();
-//   } else if (data.type === 'remote-previous') {
-//     TrackPlayer.skipToPrevious();
-//   } else if (data.type === 'playback-state') {
-//     store.setState({ playbackState: data.state });
-//   }
-// });
+TrackPlayer.registerEventHandler(async (data) => {
+  if (data.type === 'playback-track-changed') {
+    if (data.nextTrack) {
+      const { title, artist } = await TrackPlayer.getTrack(data.nextTrack);
+      store.setState({ title, artist, id: data.nextTrack });
+    }
+  } else if (data.type === 'remote-play') {
+    TrackPlayer.play();
+  } else if (data.type === 'remote-pause') {
+    TrackPlayer.pause();
+  } else if (data.type === 'remote-next') {
+    TrackPlayer.skipToNext();
+  } else if (data.type === 'remote-previous') {
+    TrackPlayer.skipToPrevious();
+  } else if (data.type === 'playback-state') {
+    store.setState({ playbackState: data.state });
+  }
+});
