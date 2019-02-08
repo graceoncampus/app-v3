@@ -21,10 +21,13 @@ import classes from './src/screens/Classes/classes';
 import Post from './src/screens/Post';
 import EditPost from './src/screens/EditPost';
 import Settings from './src/screens/Settings/settings';
+import UserInvite from './src/screens/Settings/userinvite';
+import ChangePassword from './src/screens/Settings/changepassword';
 import { saveToken } from './src/utils';
 import { Logo } from './src/icons';
 import registerAppListener from './src/listeners';
 import store from './src/store';
+
 
 firebase.firestore().settings({
   persistence: true,
@@ -52,8 +55,11 @@ const classesStack = createStackNavigator({
 })
 
 const settingsStack = createStackNavigator({
-  Setting: { screen: Settings }
+  Setting: { screen: Settings },
+  userInvite: { screen: UserInvite },
+  changePassword: { screen: ChangePassword }
 })
+
 
 const AppStack = createDrawerNavigator({
   Home: {
