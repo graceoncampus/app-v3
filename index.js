@@ -21,6 +21,8 @@ import classes from './src/screens/Classes/classes';
 import Post from './src/screens/Post';
 import EditPost from './src/screens/EditPost';
 import Settings from './src/screens/Settings/settings';
+import blogs from './src/screens/Blog/blogs';
+import blog from './src/screens/Blog/blog';
 import { saveToken } from './src/utils';
 import { Logo } from './src/icons';
 import registerAppListener from './src/listeners';
@@ -55,6 +57,11 @@ const settingsStack = createStackNavigator({
   Setting: { screen: Settings }
 })
 
+const blogStack = createStackNavigator({
+  Blog: { screen: blogs },
+  Blo: { screen: blog },
+})
+
 const AppStack = createDrawerNavigator({
   Home: {
     screen: homeStack,
@@ -71,6 +78,12 @@ const AppStack = createDrawerNavigator({
   },
   Classes: {
     screen: classesStack,
+    navigationOptions: {
+      gesturesEnabled: false,
+    },
+  },
+  Blog: {
+    screen: blogStack,
     navigationOptions: {
       gesturesEnabled: false,
     },
