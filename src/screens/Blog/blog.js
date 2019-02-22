@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { TouchableOpacity, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import { headerStyles } from '../../theme';
-import { View, Screen, Caption, Row, Image } from '@shoutem/ui';
+import { View, Caption, Image, Tile } from '@shoutem/ui';
+import { Screen } from '../../components';
 import { Back } from '../../icons';
 import HTMLView from 'react-native-htmlview';
 
@@ -33,7 +34,7 @@ export default class Blog extends Component {
       })
     }
 
-    renderNode(node, index, siblings, parent, defaultRenderer) {  //render html image differently from htmlview default
+    renderNode(node, index, siblings, parent, defaultRenderer) {  //don't render img tag
       if (node.name == 'img') {
         return ( null );
       }
@@ -45,15 +46,15 @@ export default class Blog extends Component {
       const image = featured_image ? featured_image : Object.values(attachments).length ? Object.values(attachments)[0].URL : null
       return (
         <Screen>
-          <Row>
-            <ScrollView>
-              <View styleName='vertical h-center' style={{ borderBottomWidth: 1, borderBottomColor: '#ecedef' }} >
+          <ScrollView>
+            <Tile style={{ paddingTop: 20, paddingBottom: 0, flex: 0.8, backgroundColor: 'transparent' }} styleName='text-centric'>
+              <View styleName='vertical' style={{ borderBottomWidth: 1, borderBottomColor: '#ecedef' }} >
                 {image ? <Image style={{width: Dimensions.get('window').width - 30, height: (222/375) * Dimensions.get('window').width}} source={{ uri: image }}/>: null}
                 <Caption>{dateformat.toDateString()}</Caption>
                 <HTMLView value={content} renderNode={this.renderNode}/>
               </View>
-            </ScrollView>
-          </Row>
+            </Tile>
+          </ScrollView>
         </Screen>
       );
     }
