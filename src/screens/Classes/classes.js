@@ -104,7 +104,6 @@ export default class Classes extends Component {
           data={this.state.classes}
           renderRow={this.renderRow}
         />
-      </Screen>
-    );
-  }
+    </Screen>
+  )
 }

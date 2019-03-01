@@ -24,6 +24,8 @@ import IndividualUser from './src/screens/Roster/individualUser';
 import Post from './src/screens/Post';
 import EditPost from './src/screens/EditPost';
 import Settings from './src/screens/Settings/settings';
+import UserInvite from './src/screens/Settings/userinvite';
+import ChangePassword from './src/screens/Settings/changepassword';
 import blogs from './src/screens/Blog/blogs';
 import blog from './src/screens/Blog/blog';
 import RidesTab from './src/screens/Rides/ridesTab';
@@ -31,6 +33,7 @@ import { saveToken, setCurrentUserData } from './src/utils';
 import { Logo } from './src/icons';
 import registerAppListener from './src/listeners';
 import store from './src/store';
+
 
 firebase.firestore().settings({
   persistence: true,
@@ -66,13 +69,16 @@ const ridesStack = createStackNavigator({
 })
 
 const settingsStack = createStackNavigator({
-  Setting: { screen: Settings }
+  Setting: { screen: Settings },
+  userInvite: { screen: UserInvite },
+  changePassword: { screen: ChangePassword }
 });
 
 const blogStack = createStackNavigator({
   Blog: { screen: blogs },
   Blo: { screen: blog },
 })
+
 
 const AppStack = createDrawerNavigator({
   Home: {

@@ -5,24 +5,25 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Button, Divider, Screen } from '../../components';
 import globalStyles, { headerStyles } from '../../theme';
 import { Menu } from '../../icons';
-import firebase from 'react-native-firebase'
+import firebase from 'react-native-firebase';
 
 export default class Settings extends Component {
-    static navigationOptions = ({ navigation }) => ({
-        drawer: () => ({
-            label: 'Settings'
-        }),
-        title: 'SETTINGS',
-        headerLeft: (
-            <TouchableOpacity style={{ padding: 15 }} onPress={() => navigation.openDrawer()}>
-                <Menu />
-            </TouchableOpacity>
-        ),
-        headerRight: (
-            <View />
-        ),
-        ...headerStyles,
-    })
+  /* NAVIGATION SET UP */
+  static navigationOptions = ({ navigation }) => ({
+      drawer: () => ({
+          label: 'Settings'
+      }),
+      title: 'SETTINGS',
+      headerLeft: (
+          <TouchableOpacity style={{ padding: 15 }} onPress={() => navigation.openDrawer()}>
+              <Menu />
+          </TouchableOpacity>
+      ),
+      headerRight: (
+          <View />
+      ),
+      ...headerStyles,
+  })
 
     constructor(props) {
         super(props);
@@ -152,7 +153,7 @@ export default class Settings extends Component {
                             <Text style={{ color: '#b40a34' }}>* </Text>
                         </View>
                         <TextInput
-                        style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: 'white', borderColor: 'gray', borderWidth: 0.4}}
+                        style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                         autoCapitalize='none'
                         autoCorrect={false}
                         value={firstName}
@@ -164,7 +165,7 @@ export default class Settings extends Component {
                             <Text style={{ color: '#b40a34' }}>* </Text>
                         </View>
                         <TextInput
-                        style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: 'white', borderColor: 'gray', borderWidth: 0.4}}
+                        style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                         autoCapitalize='none'
                         autoCorrect={false}
                         value={lastName}
@@ -176,7 +177,7 @@ export default class Settings extends Component {
                             <Text style={{ color: '#b40a34' }}>* </Text>
                         </View>
                         <TextInput
-                        style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: 'white', borderColor: 'gray', borderWidth: 0.4}}
+                        style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                         autoCapitalize='none'
                         autoCorrect={false}
                         value={phoneNumber}
@@ -187,7 +188,7 @@ export default class Settings extends Component {
                             <Text>Address </Text>
                         </View>
                         <TextInput
-                        style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: 'white', borderColor: 'gray', borderWidth: 0.4}}
+                        style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                         autoCapitalize='none'
                         autoCorrect={false}
                         value={address}
@@ -199,7 +200,7 @@ export default class Settings extends Component {
                             <Text style={{ color: '#b40a34' }}>* </Text>
                         </View>
                         <TextInput
-                        style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: 'white', borderColor: 'gray', borderWidth: 0.4}}
+                        style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                         autoCapitalize='none'
                         autoCorrect={false}
                         value={grad}
@@ -210,7 +211,7 @@ export default class Settings extends Component {
                             <Text>Major </Text>
                         </View>
                         <TextInput
-                        style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: 'white', borderColor: 'gray', borderWidth: 0.4}}
+                        style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                         autoCapitalize='none'
                         autoCorrect={false}
                         value={major}
@@ -221,7 +222,7 @@ export default class Settings extends Component {
                             <Text>Home Church </Text>
                         </View>
                         <TextInput
-                        style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: 'white', borderColor: 'gray', borderWidth: 0.4}}
+                        style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                         autoCapitalize='none'
                         autoCorrect={false}
                         value={homeChurch}
@@ -231,8 +232,14 @@ export default class Settings extends Component {
                         <Divider />
                         <View style={{ flex: 0.25 }} styleName='vertical h-center v-end'>
                             {this.renderButton()}
-                            <Button style={{ marginBottom: 15 }} onPress={() => { firebase.auth().signOut(); }}>
-                                <Text style={globalStyles.buttonText}>LOG OUT</Text>
+                            <Button style={{ marginBottom: 15, backgroundColor: '#DCDCDC' }}>
+                                <Text style={globalStyles.buttonText} >LOG OUT</Text>
+                            </Button>
+                            <Button style={{ marginBottom: 15, backgroundColor: '#DCDCDC' }} onPress={() => this.props.navigation.navigate('userInvite')}>
+                                <Text style={globalStyles.buttonText}>INVITE NEW USER</Text>
+                            </Button>
+                            <Button style={{ marginBottom: 15, backgroundColor: '#DCDCDC' }} onPress={() => this.props.navigation.navigate('changePassword')}>
+                                <Text style={globalStyles.buttonText}>CHANGE PASSWORD</Text>
                             </Button>
                         </View>
                     </FormGroup>
