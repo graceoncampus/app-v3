@@ -60,6 +60,8 @@ export default class Events extends Component {
         ...doc.data(),
       };
     }
+    console.log("DATA");
+    console.log(iMax);
     this.setState({
       events,
       loading: false,

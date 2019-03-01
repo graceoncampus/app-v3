@@ -10,4 +10,8 @@ target 'GOC' do
   pod 'Firebase/Firestore', '~> 5.9.0'
   pod 'Firebase/Messaging', '~> 5.9.0'
 
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
+  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
+
 end

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native';
-import { Icon, Screen, View, Caption, Row, ListView, Divider, Title } from '@shoutem/ui';
+import { Icon, View, Divider, Screen, Caption, ListView, Row, Title } from '@shoutem/ui';
 import firebase from 'react-native-firebase';
 import { headerStyles } from '../../theme';
 import { Menu } from '../../icons';
@@ -49,13 +49,15 @@ export default class Classes extends Component {
     var isEnrolled = false;
     for (; i < iMax; i += 1) {
       const doc = querySnapshot.docs[i];
-      for (var i = 0; i < doc.data().students.length; i += 1)
+      if(doc.data().students !== undefined) { // if students array does not exist for a class then not possible for logged in user to be enrolled in class
+      for (var j = 0; j < doc.data().students.length; j += 1)
       {
-          if(currentUid == doc.data().students[i]) {
-            isEnrolled = true;
-            break;
-          }
+        if(currentUid == doc.data().students[j].UID) {
+          isEnrolled = true;
+          break;
+        }
       }
+    }
       classes[i] = {
         key: doc.id,
         isEnrolled,
@@ -94,13 +96,15 @@ export default class Classes extends Component {
     );
   }
 
-  render = () => (
-    <Screen>
+  render = () => {
+    return (
+      <Screen>      
         <ListView
-        loading={this.state.loading}
-        data={this.state.classes}
-        renderRow={this.renderRow}
+          loading={this.state.loading}
+          data={this.state.classes}
+          renderRow={this.renderRow}
         />
-    </Screen>
-  )
+      </Screen>
+    );
+  }
 }

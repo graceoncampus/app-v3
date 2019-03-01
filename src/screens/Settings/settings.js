@@ -231,8 +231,8 @@ export default class Settings extends Component {
                         <Divider />
                         <View style={{ flex: 0.25 }} styleName='vertical h-center v-end'>
                             {this.renderButton()}
-                            <Button style={{ marginBottom: 15 }}>
-                                <Text style={globalStyles.buttonText} >LOG OUT</Text>
+                            <Button style={{ marginBottom: 15 }} onPress={() => { firebase.auth().signOut(); }}>
+                                <Text style={globalStyles.buttonText}>LOG OUT</Text>
                             </Button>
                         </View>
                     </FormGroup>
