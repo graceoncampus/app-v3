@@ -23,6 +23,8 @@ import EditPost from './src/screens/EditPost';
 import Settings from './src/screens/Settings/settings';
 import UserInvite from './src/screens/Settings/userinvite';
 import ChangePassword from './src/screens/Settings/changepassword';
+import ForgotPassword from './src/screens/ForgotPassword';
+import SignUp from './src/screens/SignUp';
 import { saveToken } from './src/utils';
 import { Logo } from './src/icons';
 import registerAppListener from './src/listeners';
@@ -60,6 +62,9 @@ const settingsStack = createStackNavigator({
   changePassword: { screen: ChangePassword }
 })
 
+// const forgotPasswordStack = createStackNavigator({
+//   forgotpassword: { screen: ForgotPassword }
+// })
 
 const AppStack = createDrawerNavigator({
   Home: {
@@ -135,20 +140,23 @@ const AuthStack = createStackNavigator({
       gesturesEnabled: false,
     },
   },
-  // ForgotPassword: {
-  //   screen: ForgotPassword,
-  // },
-  // Signup: {
-  //   screen: Signup,
-  // },
-}, {
-  headerMode: 'none',
-});
+  forgotPassword: {
+    screen: ForgotPassword,
+  },
+  signUp: {
+    screen: SignUp
+  },
+}
+// {
+//   headerMode: 'none',
+// }
+);
 
 class AuthLoadingScreen extends React.Component {
   async componentDidMount() {
     firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
+        // firebase.auth().signOut();
         const firstLaunch = await AsyncStorage.getItem('first');
         const ref = firebase.firestore().collection('users').doc(user.uid);
         if (firstLaunch !== 'true') {

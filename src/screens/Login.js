@@ -119,7 +119,7 @@ export default class Login extends Component {
               returnKeyType='done'
             />
             {this.renderButton()}
-            <TouchableOpacity style={{ paddingBottom: 10 }} onPress={() => this.props.navigation.navigate('Forgotpassword')}>
+            <TouchableOpacity style={{ paddingBottom: 10 }} onPress={() => this.props.navigation.navigate('forgotPassword')}>
               <View>
                 <Text style={[
                   globalStyles.caption,
@@ -138,7 +138,7 @@ export default class Login extends Component {
             globalStyles.vvEnd,
             { paddingHorizontal: 25, flex: 0.14 },
           ]}>
-            <Button clear style={{ marginBottom: 10 }} onPress={() => this.props.navigation.navigate('Signup')}>
+            <Button clear style={{ marginBottom: 10 }} onPress={() => this.props.navigation.navigate('signUp')}>
               <Text style={globalStyles.buttonTextGold}>SIGN UP</Text>
             </Button>
             <Divider />

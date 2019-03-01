@@ -30,7 +30,6 @@ class ChangePassword extends Component {
             oldPassword: '',
             newPassword: '',
             confirmNewPassword: '',
-            focus: null,
         };
         this.onChangeOld = this.onChangeOld.bind(this);
         this.onChangeNew = this.onChangeNew.bind(this);
@@ -120,7 +119,6 @@ class ChangePassword extends Component {
             oldPassword,
             newPassword,
             confirmNewPassword,
-            focus,
         } = this.state;
         return (
             <Screen>
@@ -131,7 +129,7 @@ class ChangePassword extends Component {
 
                     <FormGroup style={{ paddingHorizontal: 25, flex: 0.56 }}>
                         <View style={{ paddingTop: 12, paddingBottom: 4, flexDirection: 'row'}}>
-                            <Text>Old Password </Text>
+                            <Text style={globalStyles.label}>Old Password </Text>
                         </View>
                         <TextInput
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
@@ -143,8 +141,8 @@ class ChangePassword extends Component {
                             returnKeyType='next'
                             secureTextEntry={true}
                         />
-                        <View style={{ paddingTop: 12, paddingBottom: 4, flexDirection: 'row'}}>
-                            <Text>New Password </Text>
+                        <View style={{ paddingTop: 4, paddingBottom: 4, flexDirection: 'row'}}>
+                            <Text style={globalStyles.label}>New Password </Text>
                         </View>
                         <TextInput
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
@@ -156,8 +154,8 @@ class ChangePassword extends Component {
                             returnKeyType='next'
                             secureTextEntry={true}
                         />
-                        <View style={{ paddingTop: 12, paddingBottom: 4, flexDirection: 'row'}}>
-                            <Text>Confirm Password </Text>
+                        <View style={{ paddingTop: 4, paddingBottom: 4, flexDirection: 'row'}}>
+                            <Text style={globalStyles.label}>Confirm Password </Text>
                         </View>
                         <TextInput
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
