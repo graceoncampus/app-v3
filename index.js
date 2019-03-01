@@ -18,10 +18,14 @@ import Sermons from './src/screens/Sermons';
 import events from './src/screens/Events/events';
 import event from './src/screens/Events/event';
 import classes from './src/screens/Classes/classes';
+import classDetails from './src/screens/Classes/class';
+import classEnroll from './src/screens/Classes/classEnrollment';
+import IndividualUser from './src/screens/Roster/individualUser';
 import Post from './src/screens/Post';
 import EditPost from './src/screens/EditPost';
 import Settings from './src/screens/Settings/settings';
-import { saveToken } from './src/utils';
+import RidesTab from './src/screens/Rides/ridesTab';
+import { saveToken, setCurrentUserData } from './src/utils';
 import { Logo } from './src/icons';
 import registerAppListener from './src/listeners';
 import store from './src/store';
@@ -49,11 +53,19 @@ const eventsStack = createStackNavigator({
 
 const classesStack = createStackNavigator({
   Classes: { screen: classes },
+  Class: { screen: classDetails },
+  ClassEnrollment: { screen: classEnroll },
+  UserInformation: { screen: IndividualUser }
+});
+
+const ridesStack = createStackNavigator({
+  RideTab: { screen: RidesTab },
+  UserInformation: { screen: IndividualUser }
 })
 
 const settingsStack = createStackNavigator({
   Setting: { screen: Settings }
-})
+});
 
 const AppStack = createDrawerNavigator({
   Home: {
@@ -75,6 +87,12 @@ const AppStack = createDrawerNavigator({
       gesturesEnabled: false,
     },
   },
+  Rides: {
+    screen: ridesStack,
+    navigationOptions: {
+      gesturesEnabled: false,
+    },
+  },
   // Connect: {
   //   screen: connectStack,
   //   navigationOptions: {
@@ -86,13 +104,6 @@ const AppStack = createDrawerNavigator({
   //   navigationOptions: {
   //     gesturesEnabled: false,
   //   },
-  // },
-  // Rides: {
-  //   screen: ridesStack,
-  //   navigationOptions: {
-  //     gesturesEnabled: false,
-  //   },
-  // },
   // Roster: {
   //   screen: rosterStack,
   //   navigationOptions: {
@@ -157,6 +168,7 @@ class AuthLoadingScreen extends React.Component {
         registerAppListener(this.props.navigation, ref);
         ref.get().then((snapshot) => {
           const { permissions, readList } = snapshot.data();
+          setCurrentUserData(snapshot.data()); 
           SplashScreen.hide();
           this.props.navigation.navigate('Home', {
             permissions,
