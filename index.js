@@ -18,6 +18,7 @@ import Sermons from './src/screens/Sermons';
 import events from './src/screens/Events/events';
 import event from './src/screens/Events/event';
 import classes from './src/screens/Classes/classes';
+import calendar from './src/screens/Calendar';
 import Post from './src/screens/Post';
 import EditPost from './src/screens/EditPost';
 import Settings from './src/screens/Settings/settings';
@@ -55,6 +56,10 @@ const settingsStack = createStackNavigator({
   Setting: { screen: Settings }
 })
 
+const calendarStack = createStackNavigator({
+  Calendar: { screen: calendar},
+})
+
 const AppStack = createDrawerNavigator({
   Home: {
     screen: homeStack,
@@ -71,6 +76,12 @@ const AppStack = createDrawerNavigator({
   },
   Classes: {
     screen: classesStack,
+    navigationOptions: {
+      gesturesEnabled: false,
+    },
+  },
+  Calendar: {
+    screen: calendarStack,
     navigationOptions: {
       gesturesEnabled: false,
     },
