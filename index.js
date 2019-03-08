@@ -156,6 +156,7 @@ class AuthLoadingScreen extends React.Component {
   async componentDidMount() {
     firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
+        // firebase.auth().signOut();
         const firstLaunch = await AsyncStorage.getItem('first');
         const ref = firebase.firestore().collection('users').doc(user.uid);
         if (firstLaunch !== 'true') {

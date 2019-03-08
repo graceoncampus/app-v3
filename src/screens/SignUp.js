@@ -323,6 +323,30 @@ export default class SignUp extends Component {
                             returnKeyType = 'next'
                         />
                         <View style={{ paddingTop: 12, paddingBottom: 4, flexDirection: 'row'}}>
+                            <Text style={globalStyles.label}>Phone Number</Text>
+                            <Text style={globalStyles.labelasterisk}>* </Text>
+                        </View>
+                        <TextInput
+                            style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
+                            placeholder = "Yo digits"
+                            value = {Phone_number}
+                            keyboardType = 'phone-pad'
+                            onChangeText = {this.onChangePhoneNumber}
+                            returnKeyType = 'next'
+                        />
+                        <View style={{ paddingTop: 12, paddingBottom: 4, flexDirection: 'row'}}>
+                            <Text style={globalStyles.label}>Graduation Year</Text>
+                            <Text style={globalStyles.labelasterisk}>* </Text>
+                        </View>
+                        <TextInput
+                            style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
+                            placeholder = "2019"
+                            value = {Graduation_year}
+                            keyboardType = 'numeric'
+                            onChangeText = {this.onChangeGraduationYear}
+                            returnKeyType = 'next'
+                        />
+                        <View style={{ paddingTop: 12, paddingBottom: 4, flexDirection: 'row'}}>
                             <Text style={globalStyles.label}>Birthday</Text>
                         </View>
                         <DatePicker
@@ -374,31 +398,6 @@ export default class SignUp extends Component {
                                 },
                             }}
                             onDateChange={(bday) => { this.setState({ Birthday: bday }); }}
-                        />
-
-                        <View style={{ paddingTop: 12, paddingBottom: 4, flexDirection: 'row'}}>
-                            <Text style={globalStyles.label}>Phone Number</Text>
-                            <Text style={globalStyles.labelasterisk}>* </Text>
-                        </View>
-                        <TextInput
-                            style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
-                            placeholder = "Yo digits"
-                            value = {Phone_number}
-                            keyboardType = 'phone-pad'
-                            onChangeText = {this.onChangePhoneNumber}
-                            returnKeyType = 'next'
-                        />
-                        <View style={{ paddingTop: 12, paddingBottom: 4, flexDirection: 'row'}}>
-                            <Text style={globalStyles.label}>Graduation Year</Text>
-                            <Text style={globalStyles.labelasterisk}>* </Text>
-                        </View>
-                        <TextInput
-                            style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
-                            placeholder = "2019"
-                            value = {Graduation_year}
-                            keyboardType = 'numeric'
-                            onChangeText = {this.onChangeGraduationYear}
-                            returnKeyType = 'next'
                         />
                         <View style={{ paddingTop: 12, paddingBottom: 4, flexDirection: 'row'}}>
                             <Text style={globalStyles.label}>Major</Text>
