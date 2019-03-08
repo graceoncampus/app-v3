@@ -77,14 +77,17 @@ export const parseAndFindURLs = (summary) => {
 
 export const saveToken = (token) => {
   const { uid } = firebase.auth().currentUser;
-  firebase.firestore().collection('users').doc(uid)
+  const userRef = firebase.firestore().collection('users').doc(uid)
+  userRef
     .get()
     .then((snapshot) => {
-      const user = snapshot.data();
-      const currentTokens = user.tokens || { };
-      if (!currentTokens[token]) {
-        const tokens = { ...currentTokens, [token]: true };
-        user.update({ tokens });
+      if (snapshot.exists) {
+        const user = snapshot.data();
+        const currentTokens = user.tokens || { };
+        if (!currentTokens[token]) {
+          const tokens = { ...currentTokens, [token]: true };
+          userRef.update({ tokens });
+        }
       }
     });
 };
@@ -92,4 +95,3 @@ export const saveToken = (token) => {
 export const clamp = (value, min, max) => (min < max
   ? (value < min ? min : value > max ? max : value)
   : (value < max ? max : value > min ? min : value));
-

@@ -9,23 +9,23 @@ export default async (navigation) => {
   const ref = firebase.firestore().collection('users')
     .doc(firebase.auth().currentUser.uid);
   const snapshot = await ref.get();
-  const { permissions } = snapshot.data();
-  this.notificationOpenedListener = firebase.notifications()
-    .onNotificationOpened((notificationOpen) => {
-      const notif = notificationOpen.notification;
-      navigation.navigate(notif.data.targetScreen, {
-        title: notif.data.title,
-        admin: permissions.admin,
-        announcement: {
-          role: notif.data.role,
+  if (snapshot.exists) {
+    const { permissions } = snapshot.data();
+    this.notificationOpenedListener = firebase.notifications()
+      .onNotificationOpened((notificationOpen) => {
+        const notif = notificationOpen.notification;
+        navigation.navigate(notif.data.targetScreen, {
           title: notif.data.title,
-          post: notif.data.post,
-          date: notif.data.date,
-        },
+          admin: permissions.admin,
+          announcement: {
+            role: notif.data.role,
+            title: notif.data.title,
+            post: notif.data.post,
+            date: notif.data.date,
+          },
+        });
       });
-    });
-
-
+  }
   this.onTokenRefreshListener = firebase.messaging().onTokenRefresh((token) => {
     saveToken(token);
   });

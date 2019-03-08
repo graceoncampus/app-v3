@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { Title, Tile, Subtitle, FormGroup, Spinner } from '@shoutem/ui';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Button, Divider, Screen } from '../../components';
 import globalStyles, { headerStyles } from '../../theme';
 import { Menu } from '../../icons';
@@ -134,7 +133,7 @@ export default class Settings extends Component {
         }
         return (
             <Screen>
-                <KeyboardAwareScrollView>
+                <ScrollView>
                     <Tile style={{ paddingTop: 20, paddingBottom: 0, flex: 0.8, backgroundColor: 'transparent' }} styleName='text-centric'>
                         <Title>Account Info!</Title>
                         <Subtitle>Feel free to edit any of your account information below.</Subtitle>
@@ -242,7 +241,7 @@ export default class Settings extends Component {
                             </Button>
                         </View>
                     </FormGroup>
-                </KeyboardAwareScrollView>
+                </ScrollView>
             </Screen>
         )
     }

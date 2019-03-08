@@ -156,7 +156,6 @@ class AuthLoadingScreen extends React.Component {
   async componentDidMount() {
     firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
-        // firebase.auth().signOut();
         const firstLaunch = await AsyncStorage.getItem('first');
         const ref = firebase.firestore().collection('users').doc(user.uid);
         if (firstLaunch !== 'true') {
@@ -170,13 +169,16 @@ class AuthLoadingScreen extends React.Component {
         }
         registerAppListener(this.props.navigation, ref);
         ref.get().then((snapshot) => {
-          const { permissions, readList } = snapshot.data();
-          SplashScreen.hide();
-          this.props.navigation.navigate('Home', {
-            permissions,
-            readList,
-          });
+          if (snapshot.data() !== undefined) {
+              const { permissions, readList } = snapshot.data();
+              SplashScreen.hide();
+              this.props.navigation.navigate('Home', {
+                permissions,
+                readList,
+              });
+          }
         }).catch(err => console.warn(err));
+
       } else {
         SplashScreen.hide();
         this.props.navigation.navigate('Auth');

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Platform, StatusBar } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Platform, StatusBar, ScrollView } from 'react-native';
 import { Title, Caption, Tile, Subtitle, FormGroup, Spinner, Icon } from '@shoutem/ui';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Button, Divider, Screen } from '../components';
 import globalStyles, { headerStyles } from '../theme';
 import { Back } from '../icons';
@@ -97,20 +96,24 @@ export default class SignUp extends Component {
         }
 
         let error = false;
-        if (Confirm_password !== Password) {
-            this.setState({ error: 'passwords', loading: false });
-            error = true;
-        }
-        if (Password.length < 6) {
-            this.setState({ error: 'password length', loading: false });
-            error = true;
-        }
-        if (Phone_number.length !== 10) {
-            this.setState({ error: 'phone', loading: false });
-            error = true;
-        }
         if (First_name === '' || Last_name === '' || Email === '' || Password === '' || Confirm_password === '' || Phone_number === '' || Graduation_year === '') {
-            this.setState({ error: true, loading: false });
+            this.setState({ loading: false });
+            alert('Please fill out all fields');
+            error = true;
+        }
+        else if (Confirm_password !== Password) {
+            this.setState({ loading: false });
+            alert('Passwords do not match');
+            error = true;
+        }
+        else if (Password.length < 6) {
+            this.setState({ loading: false });
+            alert('Password must be at least 6 characters');
+            error = true;
+        }
+        else if (Phone_number.length !== 10) {
+            this.setState({ loading: false });
+            alert('Please enter your 10 digit phone number');
             error = true;
         }
 
@@ -125,16 +128,18 @@ export default class SignUp extends Component {
                             .where('email', '==', eml)
                             .get().then((querySnapshot) => {
                         if (querySnapshot.docs != 0) {
-                            firebase.auth().createUserWithEmailAndPassword(eml, Password).then(() => {
-                                firebase.firestore().collection('users').add(toAdd).then(() => {
+                            firebase.auth().createUserWithEmailAndPassword(eml, Password).then((userCred) => {
+                                const uid = userCred.user.uid
+                                firebase.firestore().collection('users').doc(uid).set(toAdd).then(() => {
                                     firebase.firestore().collection('invitedUsers').where('email', '==', eml).get().then((querySnapshot) => {
                                         querySnapshot.forEach(function(doc) {
                                           doc.ref.delete();
                                         });
                                     });
                                 });
+                                firebase.auth().signOut();
                             }).then(() => {
-                                navigation.goBack();
+                                this.props.navigation.goBack();
                             })
                         } else {
                             alert('This email has not been invited to create an account. Contact us at gocwebteam@gmail.com to get an invite.');
@@ -144,7 +149,6 @@ export default class SignUp extends Component {
                 }
             });
         } else {
-            this.scroll.scrollToPosition(0, 0, true);
             error = false;
         }
     }
@@ -225,18 +229,6 @@ export default class SignUp extends Component {
         const { loading, submitted } = this.state;
 
         let error = '';
-        if (this.state.error) {
-          error = 'Please fill out all fields';
-        }
-        if (this.state.error === 'phone') {
-          error = 'Please enter your 10 digit phone number';
-        }
-        if (this.state.error === 'passwords') {
-          error = 'Passwords do not match';
-        }
-        if (this.state.error === 'password length') {
-          error = 'Password must be at least 6 characters';
-        }
         if (this.props.error) error = this.props.error;
         const {
           focus,
@@ -254,7 +246,7 @@ export default class SignUp extends Component {
         } = this.state;
         return (
             <Screen>
-                <KeyboardAwareScrollView ref={(c) => { this.scroll = c; }}>
+                <ScrollView>
                     <Tile style={{ paddingTop: 20, paddingBottom: 0, flex: 0.8, backgroundColor: 'transparent' }} styleName='text-centric'>
                         <Title>Greetings!</Title>
                         <Subtitle>
@@ -264,7 +256,6 @@ export default class SignUp extends Component {
                             <Subtitle style={{ color: '#b40a34' }}>* </Subtitle>
                             <Subtitle> is required</Subtitle>
                         </Subtitle>
-                        <Subtitle style={{ color: '#b40a34', paddingVertical: 10 }} >{error}</Subtitle>
                     </Tile>
                     <FormGroup style={{ paddingHorizontal: 25, flex: 0.56 }}>
                         <View style={{ paddingTop: 12, paddingBottom: 4, flexDirection: 'row'}}>
@@ -414,7 +405,6 @@ export default class SignUp extends Component {
                         </View>
                         <TextInput
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
-                            onFocus={() => this.setState({ focus: 'eight' })}
                             placeholder = "Basket Weaving"
                             value = {Major}
                             onChangeText = {this.onChangeMajor}
@@ -446,7 +436,7 @@ export default class SignUp extends Component {
                     <Divider />
                     <Divider />
                     <Divider />
-                </KeyboardAwareScrollView>
+                </ScrollView>
             </Screen>
         );
     }
