@@ -1,6 +1,6 @@
 
 import React, {Component} from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View, StyleSheet } from 'react-native';
 import firebase from 'react-native-firebase';
 import { headerStyles } from '../theme';
 import { Menu } from '../icons';
@@ -8,6 +8,7 @@ import { Screen } from '../components';
 import { Title, Caption, Text } from '@shoutem/ui';
 import { Agenda } from 'react-native-calendars'
 
+const gold = '#ae956b';
 export default class Calendar extends Component {
     //Menu bar and title
     static navigationOptions = ({ navigation }) => ({
@@ -30,7 +31,7 @@ export default class Calendar extends Component {
         super(props);
         this.ref = firebase.firestore().collection('calendar');  //fetch data from firestore
         this.state = {
-            events: [],
+            events: {},
         };
     }
 
@@ -49,19 +50,28 @@ export default class Calendar extends Component {
                 ...curEvent.data(),
             };
         }
-
+        
+        //Fill the calendar with empty dates
+        var allDates = this.loadItems();
         let dateObj = {};
+        for (var i in allDates) {
+            let date = allDates[i];
+            dateObj[date] = [];
+        }
+
+        //Put in non-empty dates 
         for (var item in items[0]) {
             if (item == "key")
                 continue;
             let date = item;
-            let st = this.convert12hr(items[0][date]['0'].time);
+            let start = this.convert12hr(items[0][date]['0'].time);
             let end = this.convert12hr(items[0][date]['0'].endtime);
             let event = {
                 text: items[0][date]['0'].text,
-                time: st + " - " + end,
+                time: start + " - " + end,
                 loc: items[0][date]['0'].location
             }
+            
             if (dateObj[date] && dateObj[date].length > 0) {
                 dateObj[date].push(event);
             }
@@ -69,28 +79,27 @@ export default class Calendar extends Component {
                 dateObj[date] = [event];
             }
         }
-
         this.setState({
             events: dateObj,
         });
     }
 
-    getTodaysDate() {
-        var today = new Date();
-        var dd = today.getDate();
-        var mm = today.getMonth() + 1; //January is 0!
-        var yyyy = today.getFullYear();
-
-        if (dd < 10) {
-        dd = '0' + dd;
+    loadItems() {
+        //Get empty dates to fill the calendar with
+        var startDate = new Date('01 October 2018 00:00 UTC');
+        var endDate = new Date('01 July 2019 00:00 UTC');
+        var dates = [],
+        currentDate = startDate,
+        addDays = function(days) {
+            var date = new Date(this.valueOf());
+            date.setDate(date.getDate() + days);
+            return date;
+        };
+        while (currentDate <= endDate) {
+            dates.push(currentDate.toISOString().split('T')[0]);
+            currentDate = addDays.call(currentDate, 1);
         }
-
-        if (mm < 10) {
-        mm = '0' + mm;
-        }
-
-        today = yyyy + '-' + mm + '-' + dd;
-        return today;
+        return dates;
     }
 
     convert12hr(date) {
@@ -111,7 +120,6 @@ export default class Calendar extends Component {
             <Screen>
                 <Agenda
                     items={this.state.events}
-                    selected={this.getTodaysDate.bind(this)}
                     renderItem={(item) => {
                         return (
                             <View style={{
@@ -123,48 +131,39 @@ export default class Calendar extends Component {
                                 marginTop: 17,
                                 height: item.height,
                             }}>
-                                <Title>{item.text}</Title>
-                                <Caption>{item.time}</Caption>
-                                <Caption>{item.loc}</Caption>
+                                <Title style={{fontSize: 22}}>{item.text}</Title>
+                                <Caption style={{fontSize: 14}}>{item.time}</Caption>
+                                <Caption style={{fontSize: 14}}>{item.loc}</Caption>
                             </View>);
                     }}
                     renderEmptyDate={() => {
-                        return (
-                            <View style={{
-                                height: 15,
-                                flex: 1,
-                                paddingTop: 30,
-                            }}>
-                            </View>
-                        );
-                    }}
-                    renderEmptyData={() => {
-                        return (
-                            <View style={{
-                                height: 15,
-                                flex: 1,
-                                paddingTop: 100,
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                            }}>
-                                <Text>No events on this day!</Text>
-                            </View>
-                        );
+                        return(
+                            <View style={styles.emptyDate}></View>
+                        )
                     }}
                     rowHasChanged={(r1, r2) => {
                         return r1.text !== r2.text
                     }}
                     theme={{
-                        todayTextColor: '#ae956b',
-                        selectedDayBackgroundColor: '#ae956b',
-                        dotColor: '#ae956b',
-                        agendaDayTextColor: '#ae956b',
-                        agendaDayNumColor: '#ae956b',
-                        agendaTodayColor: '#ae956b',
-                        agendaKnobColor: '#ae956b'
+                        todayTextColor: gold,
+                        selectedDayBackgroundColor: gold,
+                        dotColor: gold,
+                        agendaDayTextColor: gold,
+                        agendaDayNumColor: gold,
+                        agendaTodayColor: gold,
+                        agendaKnobColor: gold
                       }}
                 />
             </Screen>
         )
     }
 }
+const styles = StyleSheet.create({
+    emptyDate: {
+        marginTop: 45,
+        marginRight: 10,
+        borderTopWidth: 1,
+        borderTopColor: '#dddddd',
+        height: 5,
+    }
+  });
