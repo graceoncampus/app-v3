@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { Title, Tile, Subtitle, FormGroup, Spinner } from '@shoutem/ui';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Button, Divider, Screen } from '../../components';
 import globalStyles, { headerStyles } from '../../theme';
 import { Menu } from '../../icons';
@@ -36,8 +35,7 @@ export default class Settings extends Component {
             grad: '',
             major: '',
             homeChurch: '',
-            loading: true,
-            success: false,
+            loading: false,
             submitted: false,
             error: ''
         }
@@ -135,7 +133,7 @@ export default class Settings extends Component {
         }
         return (
             <Screen>
-                <KeyboardAwareScrollView>
+                <ScrollView>
                     <Tile style={{ paddingTop: 20, paddingBottom: 0, flex: 0.8, backgroundColor: 'transparent' }} styleName='text-centric'>
                         <Title>Account Info!</Title>
                         <Subtitle>Feel free to edit any of your account information below.</Subtitle>
@@ -149,8 +147,8 @@ export default class Settings extends Component {
                     </Tile>
                     <FormGroup style={{ paddingHorizontal: 25, flex: 0.56 }}>
                         <View style={{ paddingBottom: 4, flexDirection: 'row'}}>
-                            <Text>First Name </Text>
-                            <Text style={{ color: '#b40a34' }}>* </Text>
+                            <Text style={globalStyles.label}>First Name </Text>
+                            <Text style={globalStyles.labelasterisk}>* </Text>
                         </View>
                         <TextInput
                         style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
@@ -160,9 +158,9 @@ export default class Settings extends Component {
                         onChangeText={this.onChangeFirstName}
                         returnKeyType='next'
                         />
-                        <View style={{ paddingTop: 12, paddingBottom: 4, flexDirection: 'row'}}>
-                            <Text>Last Name </Text>
-                            <Text style={{ color: '#b40a34' }}>* </Text>
+                        <View style={{ paddingTop: 4, paddingBottom: 4, flexDirection: 'row'}}>
+                            <Text style={globalStyles.label}>Last Name </Text>
+                            <Text style={globalStyles.labelasterisk}>* </Text>
                         </View>
                         <TextInput
                         style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
@@ -172,9 +170,9 @@ export default class Settings extends Component {
                         onChangeText={this.onChangeLastName}
                         returnKeyType='next'
                         />
-                        <View style={{ paddingTop: 12, paddingBottom: 4, flexDirection: 'row'}}>
-                            <Text>Phone # </Text>
-                            <Text style={{ color: '#b40a34' }}>* </Text>
+                        <View style={{ paddingTop: 4, paddingBottom: 4, flexDirection: 'row'}}>
+                            <Text style={globalStyles.label}>Phone # </Text>
+                            <Text style={globalStyles.labelasterisk}>* </Text>
                         </View>
                         <TextInput
                         style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
@@ -184,8 +182,8 @@ export default class Settings extends Component {
                         onChangeText={this.onChangePhoneNumber}
                         returnKeyType='next'
                         />
-                        <View style={{ paddingTop: 12, paddingBottom: 4, flexDirection: 'row'}}>
-                            <Text>Address </Text>
+                        <View style={{ paddingTop: 4, paddingBottom: 4, flexDirection: 'row'}}>
+                            <Text style={globalStyles.label}>Address </Text>
                         </View>
                         <TextInput
                         style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
@@ -195,9 +193,9 @@ export default class Settings extends Component {
                         onChangeText={this.onChangeAddress}
                         returnKeyType='next'
                         />
-                        <View style={{ paddingTop: 12, paddingBottom: 4, flexDirection: 'row'}}>
-                            <Text>Graduation Year </Text>
-                            <Text style={{ color: '#b40a34' }}>* </Text>
+                        <View style={{ paddingTop: 4, paddingBottom: 4, flexDirection: 'row'}}>
+                            <Text style={globalStyles.label}>Graduation Year </Text>
+                            <Text style={globalStyles.labelasterisk}>* </Text>
                         </View>
                         <TextInput
                         style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
@@ -207,8 +205,8 @@ export default class Settings extends Component {
                         onChangeText={this.onChangeGrad}
                         returnKeyType='next'
                         />
-                        <View style={{ paddingTop: 12, paddingBottom: 4, flexDirection: 'row'}}>
-                            <Text>Major </Text>
+                        <View style={{ paddingTop: 4, paddingBottom: 4, flexDirection: 'row'}}>
+                            <Text style={globalStyles.label}>Major </Text>
                         </View>
                         <TextInput
                         style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
@@ -218,8 +216,8 @@ export default class Settings extends Component {
                         onChangeText={this.onChangeMajor}
                         returnKeyType='next'
                         />
-                        <View style={{ paddingTop: 12, paddingBottom: 4, flexDirection: 'row'}}>
-                            <Text>Home Church </Text>
+                        <View style={{ paddingTop: 4, paddingBottom: 4, flexDirection: 'row'}}>
+                            <Text style={globalStyles.label}>Home Church </Text>
                         </View>
                         <TextInput
                         style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
@@ -232,7 +230,7 @@ export default class Settings extends Component {
                         <Divider />
                         <View style={{ flex: 0.25 }} styleName='vertical h-center v-end'>
                             {this.renderButton()}
-                            <Button style={{ marginBottom: 15, backgroundColor: '#DCDCDC' }}>
+                            <Button style={{ marginBottom: 15, backgroundColor: '#DCDCDC' }} onPress={() => { firebase.auth().signOut(); }}>
                                 <Text style={globalStyles.buttonText} >LOG OUT</Text>
                             </Button>
                             <Button style={{ marginBottom: 15, backgroundColor: '#DCDCDC' }} onPress={() => this.props.navigation.navigate('userInvite')}>
@@ -243,7 +241,7 @@ export default class Settings extends Component {
                             </Button>
                         </View>
                     </FormGroup>
-                </KeyboardAwareScrollView>
+                </ScrollView>
             </Screen>
         )
     }

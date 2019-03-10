@@ -28,6 +28,8 @@ import EditPost from './src/screens/EditPost';
 import Settings from './src/screens/Settings/settings';
 import UserInvite from './src/screens/Settings/userinvite';
 import ChangePassword from './src/screens/Settings/changepassword';
+import ForgotPassword from './src/screens/ForgotPassword';
+import SignUp from './src/screens/SignUp';
 import blogs from './src/screens/Blog/blogs';
 import blog from './src/screens/Blog/blog';
 import RidesTab from './src/screens/Rides/ridesTab';
@@ -272,20 +274,23 @@ const AuthStack = createStackNavigator({
       gesturesEnabled: false,
     },
   },
-  // ForgotPassword: {
-  //   screen: ForgotPassword,
-  // },
-  // Signup: {
-  //   screen: Signup,
-  // },
-}, {
-  headerMode: 'none',
-});
+  forgotPassword: {
+    screen: ForgotPassword,
+  },
+  signUp: {
+    screen: SignUp
+  },
+}
+// {
+//   headerMode: 'none',
+// }
+);
 
 class AuthLoadingScreen extends React.Component {
   async componentDidMount() {
     firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
+        // firebase.auth().signOut();
         const firstLaunch = await AsyncStorage.getItem('first');
         const ref = firebase.firestore().collection('users').doc(user.uid);
         if (firstLaunch !== 'true') {
@@ -299,14 +304,16 @@ class AuthLoadingScreen extends React.Component {
         }
         registerAppListener(this.props.navigation, ref);
         ref.get().then((snapshot) => {
-          const { permissions, readList } = snapshot.data();
-          setCurrentUserData(snapshot.data()); 
-          SplashScreen.hide();
-          this.props.navigation.navigate('Home', {
-            permissions,
-            readList,
-          });
+          if (snapshot.data() !== undefined) {
+              const { permissions, readList } = snapshot.data();
+              SplashScreen.hide();
+              this.props.navigation.navigate('Home', {
+                permissions,
+                readList,
+              });
+          }
         }).catch(err => console.warn(err));
+
       } else {
         SplashScreen.hide();
         this.props.navigation.navigate('Auth');

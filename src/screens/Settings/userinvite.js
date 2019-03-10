@@ -86,7 +86,7 @@ class UserInvite extends Component {
                           }).then(() => {
                               alert('User has been invited. They can now download the app and create an account!');
                               this.setState({ submitted: true });
-                          });
+                          }).bind(this);
                       }
                   });
               }
@@ -102,8 +102,6 @@ class UserInvite extends Component {
    * - changes the button to spinner wheel, success or neutral based on state
    */
   renderButton = () => {
-    console.log("this puppy");
-    console.log(this.state.submitted);
       if (this.state.submitted) {
           return (
               <Button success style={{ marginBottom: 15, backgroundColor: '#0ab435' }}>
@@ -144,7 +142,7 @@ class UserInvite extends Component {
 
                     <FormGroup style={{ paddingHorizontal: 25, flex: 0.56 }}>
                         <View style={{ paddingBottom: 4, flexDirection: 'row'}}>
-                            <Text>Email </Text>
+                            <Text style={globalStyles.label}>Email </Text>
                         </View>
                         <TextInput
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}

@@ -81,6 +81,14 @@ export default StyleSheet.create({
     letterSpacing: 0.5,
   },
 
+  labelasterisk: {
+    paddingTop: 10,
+    fontSize: 12,
+    color: '#b40a34',
+    lineHeight: 16,
+    letterSpacing: 0.5,
+  },
+
   caption: {
     fontSize: 12,
     color: '#848895',

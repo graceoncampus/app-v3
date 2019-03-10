@@ -83,11 +83,13 @@ export const saveToken = (token) => {
   userRef
     .get()
     .then((snapshot) => {
-      const user = snapshot.data();
-      const currentTokens = user.tokens || { };
-      if (!currentTokens[token]) {
-        const tokens = { ...currentTokens, [token]: true };
-        userRef.update({ tokens });
+      if (snapshot.exists) {
+        const user = snapshot.data();
+        const currentTokens = user.tokens || { };
+        if (!currentTokens[token]) {
+          const tokens = { ...currentTokens, [token]: true };
+          userRef.update({ tokens });
+        }
       }
     });
 };
@@ -103,4 +105,3 @@ export const setCurrentUserData = (data) => {
 export const getCurrentUserData = () => {
   return thisUserData;
 }
-
