@@ -15,6 +15,8 @@ past.f = 'just now';
 
 const singleValue = time => (time === 'hour' ? 'an' : 'a');
 
+var thisUserData = {};
+
 export const getRelativeTime = (time) => {
   const now = new Date();
   const diff = now.getTime() - time.getTime();
@@ -77,14 +79,15 @@ export const parseAndFindURLs = (summary) => {
 
 export const saveToken = (token) => {
   const { uid } = firebase.auth().currentUser;
-  firebase.firestore().collection('users').doc(uid)
+  const userRef = firebase.firestore().collection('users').doc(uid)
+  userRef
     .get()
     .then((snapshot) => {
       const user = snapshot.data();
       const currentTokens = user.tokens || { };
       if (!currentTokens[token]) {
         const tokens = { ...currentTokens, [token]: true };
-        user.update({ tokens });
+        userRef.update({ tokens });
       }
     });
 };
@@ -92,4 +95,12 @@ export const saveToken = (token) => {
 export const clamp = (value, min, max) => (min < max
   ? (value < min ? min : value > max ? max : value)
   : (value < max ? max : value > min ? min : value));
+
+export const setCurrentUserData = (data) => {
+  thisUserData = data;
+}
+
+export const getCurrentUserData = () => {
+  return thisUserData;
+}
 
