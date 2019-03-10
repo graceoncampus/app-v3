@@ -12,6 +12,7 @@
     "g": "^2.0.1",
     "react": "16.6.0-alpha.8af6728",
     "react-native": "0.57.3",
+    "react-native-calendars": "^1.22.0",
     "react-native-check-box": "^2.1.7",
     "react-native-firebase": "^5.2.0",
     "react-native-htmlview": "^0.13.0",

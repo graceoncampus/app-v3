@@ -19,6 +19,7 @@ import Sermon from './src/screens/Sermon';
 import events from './src/screens/Events/events';
 import event from './src/screens/Events/event';
 import classes from './src/screens/Classes/classes';
+import calendar from './src/screens/Calendar';
 import classDetails from './src/screens/Classes/class';
 import classEnroll from './src/screens/Classes/classEnrollment';
 import IndividualUser from './src/screens/Roster/individualUser';
@@ -182,6 +183,9 @@ const blogStack = createStackNavigator({
   Blo: { screen: blog },
 })
 
+const calendarStack = createStackNavigator({
+  Calendar: { screen: calendar},
+})
 
 const AppStack = createDrawerNavigator({
   Home: {
@@ -199,6 +203,12 @@ const AppStack = createDrawerNavigator({
   },
   Classes: {
     screen: classesStack,
+    navigationOptions: {
+      gesturesEnabled: false,
+    },
+  },
+  Calendar: {
+    screen: calendarStack,
     navigationOptions: {
       gesturesEnabled: false,
     },
