@@ -199,7 +199,7 @@ export default class RideSignup extends Component {
             checkBoxColor={'#ae956b'}
             leftText={'Driver'}
             leftTextStyle={{
-              fontFamily: 'Akkurat-Regular',
+              fontFamily: 'Akkurat',
               fontStyle: 'normal',
               fontWeight: 'normal',
               color: '#3a3f4b',
@@ -214,7 +214,7 @@ export default class RideSignup extends Component {
             leftText={'Morning (8:30 AM - 12:00 PM)'}
             checkBoxColor={'#ae956b'}
             leftTextStyle={{
-              fontFamily: 'Akkurat-Regular',
+              fontFamily: 'Akkurat',
               fontStyle: 'normal',
               fontWeight: 'normal',
               color: '#3a3f4b',
@@ -229,7 +229,7 @@ export default class RideSignup extends Component {
             checkBoxColor={'#ae956b'}
             leftText={'Staying (8:30 AM - 7:30 PM)'}
             leftTextStyle={{
-              fontFamily: 'Akkurat-Regular',
+              fontFamily: 'Akkurat',
               fontStyle: 'normal',
               fontWeight: 'normal',
               color: '#3a3f4b',
@@ -244,7 +244,7 @@ export default class RideSignup extends Component {
             checkBoxColor={'#ae956b'}
             leftText={'Evening (6:00 PM - 7:30 PM)'}
             leftTextStyle={{
-              fontFamily: 'Akkurat-Regular',
+              fontFamily: 'Akkurat',
               fontStyle: 'normal',
               fontWeight: 'normal',
               color: '#3a3f4b',

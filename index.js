@@ -15,6 +15,7 @@ import globalStyles, { variables } from './src/theme';
 import Login from './src/screens/Login';
 import Main from './src/screens/Home';
 import Sermons from './src/screens/Sermons';
+import Sermon from './src/screens/Sermon';
 import events from './src/screens/Events/events';
 import event from './src/screens/Events/event';
 import classes from './src/screens/Classes/classes';
@@ -33,6 +34,105 @@ import { saveToken, setCurrentUserData } from './src/utils';
 import { Logo } from './src/icons';
 import registerAppListener from './src/listeners';
 import store from './src/store';
+import { Animated, Easing } from 'react-native';
+
+function fromLeft(duration = 500) {
+  return {
+    transitionSpec: {
+      duration,
+      easing: Easing.out(Easing.poly(4)),
+      timing: Animated.timing,
+      useNativeDriver: true,
+    },
+    screenInterpolator: ({ layout, position, scene }) => {
+      const { index } = scene;
+      const { initWidth } = layout;
+
+      const translateX = position.interpolate({
+        inputRange: [index - 1, index, index + 1],
+        outputRange: [-initWidth, 0, 0],
+      });
+
+      const opacity = position.interpolate({
+          inputRange: [index - 1, index - 0.99, index],
+          outputRange: [0, 1, 1],
+        });
+
+      return { opacity, transform: [{ translateX }] };
+    },
+  };
+}
+
+function fromTop(duration = 500) {
+  return {
+    transitionSpec: {
+      duration,
+      easing: Easing.out(Easing.poly(4)),
+      timing: Animated.timing,
+      useNativeDriver: true,
+    },
+    screenInterpolator: ({ layout, position, scene }) => {
+      const { index } = scene;
+      const { initHeight } = layout;
+
+      const translateY = position.interpolate({
+        inputRange: [index - 1, index, index + 1],
+        outputRange: [-initHeight, 0, 0],
+      });
+
+      const opacity = position.interpolate({
+          inputRange: [index - 1, index - 0.99, index],
+          outputRange: [0, 1, 1],
+        });
+
+      return { opacity, transform: [{ translateY }] };
+    },
+  };
+}
+
+function fromBottom(duration = 500) {
+  return {
+    transitionSpec: {
+      duration,
+      easing: Easing.out(Easing.poly(4)),
+      timing: Animated.timing,
+      useNativeDriver: true,
+    },
+    screenInterpolator: ({ layout, position, scene }) => {
+      const { index } = scene;
+      const { initHeight } = layout;
+
+      const translateY = position.interpolate({
+        inputRange: [index - 1, index, index + 1],
+        outputRange: [initHeight, 0, 0],
+      });
+
+      const opacity = position.interpolate({
+          inputRange: [index - 1, index - 0.99, index],
+          outputRange: [0, 1, 1],
+        });
+
+      return { opacity, transform: [{ translateY }] };
+    },
+  };
+}
+
+const handleCustomTransition = ({ scenes }) => {
+  const prevScene = scenes[scenes.length - 2];
+  const nextScene = scenes[scenes.length - 1];
+
+  // Custom transitions go there
+  if (prevScene
+    && prevScene.route.routeName === 'Serm'
+    && nextScene.route.routeName === 'SingleSermon') {
+    return fromBottom();
+  } else if (prevScene
+    && prevScene.route.routeName === 'SingleSermon'
+    && nextScene.route.routeName === 'Serm') {
+    return fromTop();
+  }
+  return fromLeft();
+}
 
 
 firebase.firestore().settings({
@@ -49,6 +149,9 @@ const homeStack = createStackNavigator({
 
 const sermonStack = createStackNavigator({
   Serm: { screen: Sermons },
+  SingleSermon: { screen: Sermon },
+}, {
+  transitionConfig: (nav) => handleCustomTransition(nav)
 });
 
 const eventsStack = createStackNavigator({
@@ -224,22 +327,20 @@ const RootStack = createSwitchNavigator(
 );
 
 AppRegistry.registerComponent('GOC', () => RootStack);
+TrackPlayer.registerPlaybackService(() => async () => {
 
-TrackPlayer.registerEventHandler(async (data) => {
-  if (data.type === 'playback-track-changed') {
+  TrackPlayer.addEventListener('remote-play', () => TrackPlayer.play());
+  TrackPlayer.addEventListener('remote-pause', () => TrackPlayer.pause());
+  TrackPlayer.addEventListener('remote-stop', () => TrackPlayer.destroy());
+  TrackPlayer.addEventListener('remote-next', () => TrackPlayer.skipToNext());
+  TrackPlayer.addEventListener('remote-previous', () => TrackPlayer.skipToPrevious());
+  TrackPlayer.addEventListener('playback-track-changed', async (data) => {
     if (data.nextTrack) {
-      const { title, artist } = await TrackPlayer.getTrack(data.nextTrack);
-      store.setState({ title, artist, id: data.nextTrack });
+      const trackData = await TrackPlayer.getTrack(data.nextTrack);
+      store.setState(trackData);
     }
-  } else if (data.type === 'remote-play') {
-    TrackPlayer.play();
-  } else if (data.type === 'remote-pause') {
-    TrackPlayer.pause();
-  } else if (data.type === 'remote-next') {
-    TrackPlayer.skipToNext();
-  } else if (data.type === 'remote-previous') {
-    TrackPlayer.skipToPrevious();
-  } else if (data.type === 'playback-state') {
+  });
+  TrackPlayer.addEventListener('playback-state', (data) => {
     store.setState({ playbackState: data.state });
-  }
+  });
 });

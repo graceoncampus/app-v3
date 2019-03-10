@@ -29,7 +29,7 @@ export default class RidesTab extends Component {
   render = () => (
     <ScrollableTabView
       tabBarBackgroundColor='#fff'
-      tabBarTextStyle={{ paddingTop: 10, fontFamily: 'Akkurat-Regular', fontSize: 13, color: '#222222', lineHeight: 15 }}
+      tabBarTextStyle={{ paddingTop: 10, fontFamily: 'Akkurat', fontSize: 13, color: '#222222', lineHeight: 15 }}
       tabBarUnderlineStyle={{ height: 2, backgroundColor: '#ae956b' }}
     >
       <MyRide navigation={this.props.navigation} tabLabel="My Ride" />

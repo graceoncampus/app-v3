@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { ProgressComponent } from 'react-native-track-player';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import TextTicker from 'react-native-text-ticker'
+import { StyleSheet, Text, Image, TouchableOpacity, View } from 'react-native';
 import store from '../store';
 import { Play, Pause } from '../icons';
 import globalStyles, { variables } from '../theme';
-import Modal from '../components/Modal';
 
 const styles = StyleSheet.create({
   card: {
@@ -15,7 +13,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   progress: {
-    height: 2,
+    height: 4,
     width: '100%',
     flexDirection: 'row',
   },
@@ -39,8 +37,7 @@ export default class Player extends Component {
   };
 
   state = {
-    ...store.getState(),
-    showModal: false,
+    ...store.getState()
   }
 
   componentDidMount() {
@@ -49,58 +46,35 @@ export default class Player extends Component {
     }));
   }
 
-  showModal = () => {
-    this.setState({
-      showModal: true,
-    });
+  navigate = () => {
+    this.props.navigation.navigate('SingleSermon')
   }
-
   render() {
     const {
-      onNext, onPrevious, onTogglePlayback,
+      onTogglePlayback,
     } = this.props;
     return (
       <React.Fragment>
-        <Modal
-          style={{ zIndex: 100000 }}
-          visible={this.state.showModal}
-          onRequestClose={() => this.setState({ showModal: false })}
-        >
-          <View style={{
-            height: 300,
-            backgroundColor: 'white',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            <Text>Here is the content inside panel</Text>
-          </View>
-        </Modal>
         <View style={[globalStyles.vertical, styles.card]}>
           <ProgressBar />
-          <TouchableOpacity style={[globalStyles.row, globalStyles.stretch]} onPress={this.showModal}>
+          <TouchableOpacity style={[globalStyles.row, globalStyles.stretch]} onPress={this.navigate}>
+              <Image style={{ width: 40, height: 40, borderRadius: 2 }} source={{ uri: this.state.artwork }} />
               <View style={[
                 {
-                  marginLeft: 20,
+                  marginLeft: 10,
                   paddingRight: 10,
                   flex: 0.98,
                 },
                 globalStyles.vertical,
               ]}
               >
-                <TextTicker
-                  duration={3000}
-                  loop
-                  bounce
-                  repeatSpacer={50}
-                  marqueeDelay={1000}
-                >
+                <Text style={{ fontWeight: 'bold', marginBottom: 3 }}>
                   {this.state.title}
-                </TextTicker>
+                </Text>
                 <Text
                   style={[
-                    { marginBottom: -2, marginTop: -1 },
-                    globalStyles.small,
-                    globalStyles.textCenter,
+                    { marginBottom: -2},
+                    globalStyles.small
                   ]}
                 >{this.state.artist}</Text>
               </View>
