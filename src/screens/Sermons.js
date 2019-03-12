@@ -1,6 +1,7 @@
 import React from "react";
 import TrackPlayer from "react-native-track-player";
-import { TouchableOpacity, Text, View, ListView } from "react-native";
+import { TouchableOpacity, Text, ListView, View } from "react-native";
+import { Spinner } from '@shoutem/ui'
 import firebase from "react-native-firebase";
 
 import globalStyles, { headerStyles } from "../theme";
@@ -178,6 +179,12 @@ export default class Sermons extends React.Component {
         </Screen>
       );
     }
-    return <View />;
+    return (
+      <Screen>
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <Spinner size="large" />
+          </View>
+      </Screen>
+  );
   }
 }

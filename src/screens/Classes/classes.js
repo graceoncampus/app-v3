@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native';
-import { Icon, View, Divider, Screen, Caption, ListView, Row, Title } from '@shoutem/ui';
+import { Icon, View, Divider, Screen, Caption, ListView, Row, Title, Spinner } from '@shoutem/ui';
 import firebase from 'react-native-firebase';
 import { headerStyles } from '../../theme';
 import { Menu } from '../../icons';
@@ -97,14 +97,22 @@ export default class Classes extends Component {
   }
 
   render = () => {
+    if (!this.state.loading) {
+      return (
+        <Screen>      
+          <ListView
+            data={this.state.classes}
+            renderRow={this.renderRow}
+          />
+        </Screen>
+      )
+    }
     return (
-      <Screen>      
-        <ListView
-          loading={this.state.loading}
-          data={this.state.classes}
-          renderRow={this.renderRow}
-        />
+      <Screen>
+        <View styleName='vertical fill-parent v-center h-center'>
+        <Spinner size="large" />
+        </View>
       </Screen>
-    )
+    );
   }
 }

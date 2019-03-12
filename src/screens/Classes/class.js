@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, ScrollView, Alert } from 'react-native';
-import { Title, View, Text, Caption } from '@shoutem/ui';
+import { TouchableOpacity, Alert } from 'react-native';
+import { Title, View, Text, Caption, ScrollView } from '@shoutem/ui';
 import { Button, Divider, Screen } from '../../components';
 import firebase from 'react-native-firebase';
 import globalStyles, { headerStyles } from '../../theme';

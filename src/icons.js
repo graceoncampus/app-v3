@@ -39,7 +39,7 @@ export const New = () => (
 );
 
 export const Menu = () => (
-  <Svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="#222" viewBox="0 0 24 24">
+  <Svg xmlns="http://www.w3.org/2000/svg" width="36" height="24" fill="none" stroke="#222" viewBox="0 0 24 24">
     <Path {...iconStyle} d="M3 12h18M3 6h18M3 18h18"/>
   </Svg>
 );
@@ -51,7 +51,7 @@ export const Chevron = () => (
 );
 
 export const Back = () => (
-  <Svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
+  <Svg xmlns="http://www.w3.org/2000/svg" width="36" height="24" fill="none" viewBox="0 0 24 24">
     <Path {...iconStyle} d="M19 12H5M12 19l-7-7 7-7"/>
   </Svg>
 );

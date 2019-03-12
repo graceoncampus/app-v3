@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Platform, StatusBar, ScrollView } from 'react-native';
-import { Title, Caption, Tile, Subtitle, FormGroup, Spinner, Icon } from '@shoutem/ui';
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { Title, Tile, Subtitle, FormGroup, Spinner } from '@shoutem/ui';
 import { Button, Divider, Screen } from '../components';
 import globalStyles, { headerStyles } from '../theme';
 import { Back } from '../icons';
@@ -98,7 +98,7 @@ export default class SignUp extends Component {
         let error = false;
         if (First_name === '' || Last_name === '' || Email === '' || Password === '' || Confirm_password === '' || Phone_number === '' || Graduation_year === '') {
             this.setState({ loading: false });
-            alert('Please fill out all fields');
+            alert('Please fill out all required fields');
             error = true;
         }
         else if (Confirm_password !== Password) {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { TouchableOpacity, Dimensions } from 'react-native';
-import { Screen, View, Caption, Row, ListView, Image, Divider } from '@shoutem/ui';
+import { Screen, View, Caption, Row, ListView, Image, Divider, Spinner } from '@shoutem/ui';
 import { headerStyles } from '../../theme';
 import { Menu } from '../../icons';
 import HTMLView from 'react-native-htmlview';
@@ -47,7 +47,7 @@ export default class Blogs extends Component {
                 width: Dimensions.get('window').width,
                 height: Dimensions.get('window').height,
             }
-        })
+        });
     }
 
     renderRow(blog) {
@@ -73,13 +73,23 @@ export default class Blogs extends Component {
         );
     }
 
-    render = () => (
-        <Screen>
-            <ListView
-                loading={this.state.loading}
-                data={this.state.blogs}
-                renderRow={this.renderRow}
-            />
-        </Screen>
-    );
+    render = () => {
+        if (!this.state.loading) {
+            return (
+                <Screen>
+                    <ListView
+                        data={this.state.blogs}
+                        renderRow={this.renderRow}
+                    />
+                </Screen>
+            );
+        }
+        return (
+            <Screen>
+                <View styleName='vertical fill-parent v-center h-center'>
+                <Spinner size="large" />
+                </View>
+            </Screen>
+        );
+    };
 }

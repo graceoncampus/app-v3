@@ -1,14 +1,9 @@
 import React, { Component } from 'react';
-import {
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
-import { Screen, View, ListView, Image, Divider } from '@shoutem/ui';
+import { TouchableOpacity, ScrollView } from 'react-native';
+import { Screen, View, ListView, Image, Divider, Spinner, Tile } from '@shoutem/ui';
 import { headerStyles } from '../../theme';
 import { Menu } from '../../icons';
-import {
-  ScrollDriver,
-} from '@shoutem/animation';
+import { ScrollDriver } from '@shoutem/animation';
 import firebase from 'react-native-firebase';
 
 export default class Events extends Component {
@@ -37,7 +32,6 @@ export default class Events extends Component {
     this.state = {
         events: [],
         loading: true,
-
     }
   };
 
@@ -60,8 +54,6 @@ export default class Events extends Component {
         ...doc.data(),
       };
     }
-    console.log("DATA");
-    console.log(iMax);
     this.setState({
       events,
       loading: false,
@@ -83,15 +75,35 @@ export default class Events extends Component {
   }
 
 
-  render = () => (
-      <Screen>
-        <ScrollView {...this.driver.scrollViewProps}>
-          <ListView
-              loading={this.state.loading}
+  render = () => {
+    if (!this.state.loading) {
+      return (
+        <Screen>
+          <ScrollView {...this.driver.scrollViewProps}>
+            <ListView
               data={this.state.events}
               renderRow={this.renderRow}
             />
           </ScrollView>
         </Screen>
+      );
+    }
+    if (!this.state.loading && this.state.events == []) {
+      return (
+        <Screen>
+          <Tile style={{ paddingBottom: 0, flex: 0.8, backgroundColor: 'transparent' }} styleName='text-centric'>
+            <Title>Looks like there's no upcoming events!</Title>
+          </Tile>
+        </Screen>
+      )
+    }
+    return (
+      <Screen>
+          <View styleName='vertical fill-parent v-center h-center'>
+          <Spinner size="large" />
+          </View>
+      </Screen>
     );
   }
+}
+  

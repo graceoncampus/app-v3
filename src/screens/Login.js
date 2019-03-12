@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { TextInput, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import firebase from 'react-native-firebase';
-
+import { Spinner } from '@shoutem/ui';
 import { Text, Button, Divider, Screen } from '../components';
 import globalStyles, { variables } from '../theme';
 import { Logo } from '../icons';
@@ -43,7 +43,7 @@ export default class Login extends Component {
     if (this.state.loading && this.props.loading !== false) {
       return (
         <Button style={{ marginVertical: 10, paddingVertical: 15 }}>
-          {/* <Spinner style={{ color: '#fff' }}/> */}
+          <Spinner style={{ color: '#fff' }}/>
         </Button>
       );
     }
