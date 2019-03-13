@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, AsyncStorage } from 'react-native';
 import { Title, Tile, Subtitle, FormGroup, Spinner } from '@shoutem/ui';
 import { Button, Divider, Screen } from '../../components';
 import globalStyles, { headerStyles } from '../../theme';
 import { Menu } from '../../icons';
 import firebase from 'react-native-firebase';
-import { getCurrentUserData } from '../../utils';
+import { getCurrentUserData, signOut } from '../../utils';
 
 export default class Settings extends Component {
   /* NAVIGATION SET UP */
@@ -204,7 +204,7 @@ export default class Settings extends Component {
                         <Divider />
                         <View style={{ flex: 0.25 }} styleName='vertical h-center v-end'>
                             {this.renderButton()}
-                            <Button clear style={{ marginBottom: 15 }} onPress={() => { firebase.auth().signOut(); }}>
+                            <Button clear style={{ marginBottom: 15 }} onPress={() => {signOut()}}>
                                 <Text style={globalStyles.buttonTextGold} >LOG OUT</Text>
                             </Button>
                             <Button clear style={{ marginBottom: 15 }} onPress={() => this.props.navigation.navigate('userInvite')}>

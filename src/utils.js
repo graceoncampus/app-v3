@@ -1,5 +1,5 @@
 import firebase from 'react-native-firebase';
-
+import { AsyncStorage } from 'react-native';
 const times = [
   60000, // minute
   3600000, // hour
@@ -77,21 +77,49 @@ export const parseAndFindURLs = (summary) => {
   return ([summary, '', '']);
 };
 
+
 export const saveToken = (token) => {
-  const { uid } = firebase.auth().currentUser;
-  const userRef = firebase.firestore().collection('users').doc(uid)
-  userRef
-    .get()
-    .then((snapshot) => {
+  AsyncStorage.setItem('token', token);
+  const user = firebase.auth().currentUser;
+  if (user && user._user) {
+    const { _user: { uid } } = user;
+    const userRef = firebase.firestore().collection('users').doc(uid)
+    userRef
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists) {
+          const user = snapshot.data();
+          const currentTokens = user.tokens || { };
+          if (!currentTokens[token]) {
+            const tokens = { ...currentTokens, [token]: true };
+            userRef.update({ tokens });
+          }
+        }
+      });
+  }
+};
+
+export const signOut = async () => {
+  const token = await AsyncStorage.getItem('token');
+  if (token) {
+    const user = firebase.auth().currentUser;
+    if (user && user._user) {
+      const { _user: { uid } } = user;
+      const userRef = firebase.firestore().collection('users').doc(uid)
+      const snapshot = await userRef.get();
       if (snapshot.exists) {
         const user = snapshot.data();
         const currentTokens = user.tokens || { };
-        if (!currentTokens[token]) {
-          const tokens = { ...currentTokens, [token]: true };
-          userRef.update({ tokens });
+        if (currentTokens[token]) {
+          const tokens = { ...currentTokens };
+          delete tokens[token]
+          await userRef.update({ tokens });
+          await AsyncStorage.removeItem('token');
         }
       }
-    });
+    }
+  }
+  firebase.auth().signOut();
 };
 
 export const clamp = (value, min, max) => (min < max

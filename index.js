@@ -289,7 +289,8 @@ const AuthStack = createStackNavigator({
 class AuthLoadingScreen extends React.Component {
   async componentDidMount() {
     firebase.auth().onAuthStateChanged(async (user) => {
-      if (user) {
+      const signedUp = await AsyncStorage.getItem('sign_up');
+      if (user && (!signedUp || signedUp=="false")) {
         const firstLaunch = await AsyncStorage.getItem('first');
         const ref = firebase.firestore().collection('users').doc(user.uid);
         if (firstLaunch !== 'true') {
@@ -326,7 +327,7 @@ class AuthLoadingScreen extends React.Component {
       <SafeAreaView style={[globalStyles.vvCenter, globalStyles.vhCenter, { backgroundColor: variables.primary, flex: 1 }]}>
         <StatusBar barStyle="light-content" backgroundColor="transparent" translucent={true}/>
         <Logo style={{ marginBottom: 30 }} width={150} height={57.75} color="#fff" />
-        <ActivityIndicator />
+        <ActivityIndicator  color="#fff"/>
       </SafeAreaView>
     );
   }

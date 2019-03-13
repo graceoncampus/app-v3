@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, AsyncStorage, TextInput, TouchableOpacity } from 'react-native';
 import { Title, Tile, Subtitle, FormGroup, Spinner } from '@shoutem/ui';
 import { Button, Divider, Screen } from '../components';
 import globalStyles, { headerStyles } from '../theme';
 import { Back } from '../icons';
 import firebase from 'react-native-firebase';
 import DatePicker from 'react-native-datepicker';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default class SignUp extends Component {
     /* NAVIGATION SET UP */
@@ -54,7 +55,7 @@ export default class SignUp extends Component {
         this.signUp = this.signUp.bind(this);
     }
 
-    signUp() {
+    signUp = () => {
         this.setState({ loading: true });
         const {
             Email,
@@ -70,6 +71,11 @@ export default class SignUp extends Component {
             Address,
         } = this.state;
 
+        let birthday;
+        if (Birthday) {
+            birthday = new Date(Birthday);
+        }
+
         const eml = Email.toLowerCase();
 
         const Permissions = {
@@ -83,7 +89,7 @@ export default class SignUp extends Component {
 
         const toAdd = {
             address: Address,
-            birthday: Birthday,
+            birthday,
             email: eml,
             firstName: First_name,
             grad: Graduation_year,
@@ -118,36 +124,36 @@ export default class SignUp extends Component {
         }
 
         if (!error) {
-            firebase.firestore().collection('users').where('email', '==', eml).get().then((querySnapshot) => {
-                if (querySnapshot.docs != 0) {
+            const ref = firebase.firestore().collection('users');
+            const query = ref.where('email', '==', eml);
+            query.get().then((querySnapshot) => {
+                if (!querySnapshot.empty) {
                     alert('An account with this email has already been created');
                     this.setState({ loading: false });
                 } else {
                     firebase.firestore()
-                            .collection('invitedUsers')
-                            .where('email', '==', eml)
-                            .get().then((querySnapshot) => {
-                        if (querySnapshot.docs != 0) {
-                            firebase.auth().createUserWithEmailAndPassword(eml, Password).then((usercred) => {
-                                const uid = usercred.user.uid
-                                firebase.firestore().collection('users').doc(`${uid}`).set(toAdd).then(() => {
-                                    console.log("GOT HERE");
-                                    console.log(toAdd);
-                                    firebase.firestore().collection('invitedUsers').where('email', '==', eml).get().then((querySnapshot) => {
-                                        querySnapshot.forEach(function(doc) {
-                                          doc.ref.delete();
-                                        });
-                                    });
-                                });
-                                firebase.auth().signOut();
-                            }).then(() => {
-                                this.props.navigation.goBack();
-                            })
-                        } else {
-                            alert('This email has not been invited to create an account. Contact us at gocwebteam@gmail.com to get an invite.');
-                            this.setState({ loading: false });
-                        }
-                    })
+                        .collection('invitedUsers')
+                        .where('email', '==', eml)
+                        .get().then(async (invitedUsers) => {
+                            if (!invitedUsers.empty) {
+                                AsyncStorage.setItem('sign_up', 'true');
+                                try {
+                                    const usercred = await firebase.auth().createUserWithEmailAndPassword(eml, Password);
+                                    await firebase.auth().signOut();
+                                    const uid = usercred.user._user.uid;
+                                    await ref.doc(uid).set(toAdd);
+                                    invitedUsers.forEach(async doc => await doc.ref.delete());
+                                    this.props.navigation.goBack();
+                                } catch (err) {
+                                    alert(err.message);
+                                    this.setState({ loading: false });
+                                    AsyncStorage.setItem('sign_up', 'false');
+                                }
+                            } else {
+                                alert('This email has not been invited to create an account. Contact us at gocwebteam@gmail.com to get an invite.');
+                                this.setState({ loading: false });
+                            }
+                        })
                 }
             });
         } else {
@@ -229,7 +235,6 @@ export default class SignUp extends Component {
 
     render() {
         const { loading, submitted } = this.state;
-
         let error = '';
         if (this.props.error) error = this.props.error;
         const {
@@ -247,7 +252,7 @@ export default class SignUp extends Component {
         } = this.state;
         return (
             <Screen>
-                <ScrollView>
+                <KeyboardAwareScrollView extraHeight={20}>
                     <Tile style={{ paddingTop: 20, paddingBottom: 0, flex: 0.8, backgroundColor: 'transparent' }} styleName='text-centric'>
                         <Title>Greetings!</Title>
                         <Subtitle>
@@ -267,6 +272,7 @@ export default class SignUp extends Component {
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                             autoCapitalize = 'none'
                             autoCorrect = {false}
+                            autoComplete={false}
                             placeholder ="Jane"
                             value = {First_name}
                             onChangeText = {this.onChangeFirstName}
@@ -280,6 +286,7 @@ export default class SignUp extends Component {
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                             autoCapitalize ='none'
                             autoCorrect = {false}
+                            autoComplete={false}
                             placeholder = "Zhang"
                             value = {Last_name}
                             onChangeText = {this.onChangeLastName}
@@ -293,6 +300,7 @@ export default class SignUp extends Component {
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                             autoCapitalize = 'none'
                             autoCorrect = {false}
+                            autoComplete={false}
                             placeholder = "chessrocks1221@gmail.com"
                             keyboardType = "email-address"
                             value = {Email}
@@ -306,6 +314,7 @@ export default class SignUp extends Component {
                         <TextInput
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                             value = {Password}
+                            autoComplete={false}
                             placeholder = "iluvchess123"
                             secureTextEntry
                             onChangeText = {this.onChangePassword}
@@ -318,6 +327,7 @@ export default class SignUp extends Component {
                         <TextInput
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                             value = {Confirm_password}
+                            autoComplete={false}
                             placeholder = "iluvchess123"
                             secureTextEntry
                             onChangeText = {this.onChangeConfirmPassword}
@@ -331,6 +341,7 @@ export default class SignUp extends Component {
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                             placeholder = "Yo digits"
                             value = {Phone_number}
+                            autoComplete={false}
                             keyboardType = 'phone-pad'
                             onChangeText = {this.onChangePhoneNumber}
                             returnKeyType = 'next'
@@ -343,6 +354,7 @@ export default class SignUp extends Component {
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                             placeholder = "2019"
                             value = {Graduation_year}
+                            autoComplete={false}
                             keyboardType = 'numeric'
                             onChangeText = {this.onChangeGraduationYear}
                             returnKeyType = 'next'
@@ -407,6 +419,7 @@ export default class SignUp extends Component {
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                             placeholder = "Basket Weaving"
                             value = {Major}
+                            autoComplete={false}
                             onChangeText = {this.onChangeMajor}
                             returnKeyType = 'next'
                         />
@@ -417,6 +430,7 @@ export default class SignUp extends Component {
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                             placeholder = "Grace Community Church"
                             value = {Home_church}
+                            autoComplete={false}
                             onChangeText = {this.onChangeHomeChurch}
                             returnKeyType = 'next'
                         />
@@ -427,6 +441,7 @@ export default class SignUp extends Component {
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                             placeholder = "424 Veteran Ave"
                             value = {Address}
+                            autoComplete={false}
                             onChangeText = {this.onChangeAddress}
                             returnKeyType = 'done'
                         />
@@ -436,7 +451,7 @@ export default class SignUp extends Component {
                     <Divider />
                     <Divider />
                     <Divider />
-                </ScrollView>
+                </KeyboardAwareScrollView>
             </Screen>
         );
     }

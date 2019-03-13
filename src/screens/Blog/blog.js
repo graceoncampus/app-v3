@@ -44,6 +44,8 @@ export default class Blog extends Component {
       const { date, featured_image, content, attachments } = this.state.data;
       const dateformat = new Date(date);
       const image = featured_image ? featured_image : Object.values(attachments).length ? Object.values(attachments)[0].URL : null
+      let cont = content.replace(/(\r\n|\n|\r)/gm, '') + '\n';
+
       return (
         <Screen>
           <ScrollView>
@@ -51,7 +53,7 @@ export default class Blog extends Component {
               <View styleName='vertical' style={{ borderBottomWidth: 1, borderBottomColor: '#ecedef' }} >
                 {image ? <Image style={{width: Dimensions.get('window').width - 30, height: (222/375) * Dimensions.get('window').width}} source={{ uri: image }}/>: null}
                 <Caption>{dateformat.toDateString()}</Caption>
-                <HTMLView value={content} renderNode={this.renderNode}/>
+                <HTMLView value={cont} renderNode={this.renderNode}/>
               </View>
             </Tile>
           </ScrollView>

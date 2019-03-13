@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TextInput, TouchableOpacity, View } from 'react-native';
+import { TextInput, AsyncStorage, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import firebase from 'react-native-firebase';
 import { Spinner } from '@shoutem/ui';
@@ -8,6 +8,10 @@ import globalStyles, { variables } from '../theme';
 import { Logo } from '../icons';
 
 export default class Login extends Component {
+  static navigationOptions = ({ navigation }) => ({
+    header: null
+  })
+
   state = {
     email: '',
     password: '',
@@ -16,6 +20,7 @@ export default class Login extends Component {
   };
 
   onButtonPress = () => {
+    AsyncStorage.setItem('sign_up', "false")
     const { email, password } = this.state;
     this.setState({ submitted: true });
     if (email !== '' && password !== '') {
