@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native';
-import { Icon, View, Divider, Screen, Caption, ListView, Row, Title, Spinner } from '@shoutem/ui';
+import { Icon, View, Divider, Caption, ListView, Row, Title, Spinner } from '@shoutem/ui';
+import { Screen } from '../../components';
 import firebase from 'react-native-firebase';
 import { headerStyles } from '../../theme';
 import { Menu } from '../../icons';

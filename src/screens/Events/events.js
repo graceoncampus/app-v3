@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, ScrollView } from 'react-native';
-import { Screen, View, ListView, Image, Divider, Spinner, Tile } from '@shoutem/ui';
+import { TouchableOpacity, ScrollView, View } from 'react-native';
+import { Screen } from '../../components';
+import { ListView, Image, Divider, Spinner, Tile } from '@shoutem/ui';
 import { headerStyles } from '../../theme';
 import { Menu } from '../../icons';
 import { ScrollDriver } from '@shoutem/animation';
@@ -99,7 +100,7 @@ export default class Events extends Component {
     }
     return (
       <Screen>
-          <View styleName='vertical fill-parent v-center h-center'>
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Spinner size="large" />
           </View>
       </Screen>

@@ -3,7 +3,8 @@ import {
   TouchableOpacity, ScrollView, Linking,
 } from 'react-native';
 import { headerStyles } from '../../theme';
-import { Divider, View, Screen, Text, Caption, Image } from '@shoutem/ui';
+import { Screen } from '../../components';
+import { Divider, View, Text, Caption, Image } from '@shoutem/ui';
 import { Back } from '../../icons';
 
 export default class Event extends Component {

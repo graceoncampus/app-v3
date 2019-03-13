@@ -5,6 +5,7 @@ import { Button, Divider, Screen } from '../../components';
 import globalStyles, { headerStyles } from '../../theme';
 import { Menu } from '../../icons';
 import firebase from 'react-native-firebase';
+import { getCurrentUserData } from '../../utils';
 
 export default class Settings extends Component {
   /* NAVIGATION SET UP */
@@ -26,45 +27,22 @@ export default class Settings extends Component {
 
     constructor(props) {
         super(props);
+        const thisUserData = getCurrentUserData();
+        const { firstName, lastName, address, phoneNumber, birthday, grad, major, homeChurch} = thisUserData;
         this.state = {
-            firstName: '',
-            lastName: '',
-            birthday: '',
-            phoneNumber: '',
-            address: '',
-            grad: '',
-            major: '',
-            homeChurch: '',
+            firstName,
+            lastName,
+            birthday,
+            phoneNumber,
+            address,
+            grad,
+            major,
+            homeChurch,
             loading: false,
             submitted: false,
             error: ''
         }
-        this.unsubscribe = null;
-        currentUid = firebase.auth().currentUser.uid;
-        this.ref = firebase.firestore().collection('users').doc(`${currentUid}`);
     };
-
-    componentDidMount() {
-        this.ref.get().then(this.onCollectionUpdate);
-    }
-
-    componentWillUnmount() {
-        this.unsubscribe();
-    }
-
-    onCollectionUpdate = (docs) => {
-        this.setState({
-            firstName: docs.data().firstName,
-            lastName: docs.data().lastName,
-            birthday: docs.data().birthday,
-            phoneNumber: docs.data().phoneNumber,
-            address: docs.data().address,
-            grad: docs.data().grad,
-            major: docs.data().major,
-            homeChurch: docs.data().homeChurch,
-            loading: false,
-        });
-    }
 
     onChangeFirstName = (firstName) => { this.setState({ submitted: false, firstName }); }
     onChangeLastName = (lastName) => { this.setState({ submitted: false, lastName }); }
@@ -107,7 +85,8 @@ export default class Settings extends Component {
           this.setState({ error: 'Please fill out all required fields.', loading: false });
         }
         else {
-          this.ref.update({
+          currentUid = firebase.auth().currentUser.uid;
+          firebase.firestore().collection('users').doc(`${currentUid}`).update({
             firstName,
             lastName,
             birthday,
@@ -126,11 +105,6 @@ export default class Settings extends Component {
     render = () => {
         const { firstName, lastName, birthday, phoneNumber, address, grad, major, homeChurch, loading, error } = this.state;
 
-        if(loading) {
-            return (
-                <Screen></Screen>
-            )
-        }
         return (
             <Screen>
                 <ScrollView>
@@ -230,14 +204,14 @@ export default class Settings extends Component {
                         <Divider />
                         <View style={{ flex: 0.25 }} styleName='vertical h-center v-end'>
                             {this.renderButton()}
-                            <Button style={{ marginBottom: 15, backgroundColor: '#DCDCDC' }} onPress={() => { firebase.auth().signOut(); }}>
-                                <Text style={globalStyles.buttonText} >LOG OUT</Text>
+                            <Button clear style={{ marginBottom: 15 }} onPress={() => { firebase.auth().signOut(); }}>
+                                <Text style={globalStyles.buttonTextGold} >LOG OUT</Text>
                             </Button>
-                            <Button style={{ marginBottom: 15, backgroundColor: '#DCDCDC' }} onPress={() => this.props.navigation.navigate('userInvite')}>
-                                <Text style={globalStyles.buttonText}>INVITE NEW USER</Text>
+                            <Button clear style={{ marginBottom: 15 }} onPress={() => this.props.navigation.navigate('userInvite')}>
+                                <Text style={globalStyles.buttonTextGold}>INVITE NEW USER</Text>
                             </Button>
-                            <Button style={{ marginBottom: 15, backgroundColor: '#DCDCDC' }} onPress={() => this.props.navigation.navigate('changePassword')}>
-                                <Text style={globalStyles.buttonText}>CHANGE PASSWORD</Text>
+                            <Button clear style={{ marginBottom: 15 }} onPress={() => this.props.navigation.navigate('changePassword')}>
+                                <Text style={globalStyles.buttonTextGold}>CHANGE PASSWORD</Text>
                             </Button>
                         </View>
                     </FormGroup>

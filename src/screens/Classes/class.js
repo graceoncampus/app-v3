@@ -76,20 +76,20 @@ export default class classDetails extends Component {
     const { openSpots, isEnrolled } = this.state.data;
     if(openSpots == 0 && !isEnrolled) {
       return (
-        <Button style={{ marginBottom: 15 }} onPress={() => Alert.alert('','Sorry, class is still full')}>
+        <Button style={{ marginBottom: 15, backgroundColor: 'red' }} onPress={() => Alert.alert('','Sorry, class is still full')}>
           <Text>CLASS FULL</Text>
         </Button>
       )
     }
     if (isEnrolled) {
       return (
-        <Button style={{ marginBottom: 15 }} onPress={() => this.unenroll()}>
+        <Button style={{ marginBottom: 15, backgroundColor: 'red' }} onPress={() => this.unenroll()}>
           <Text style={globalStyles.buttonText}>UNENROLL</Text>
         </Button>
       );
     }
     return (
-      <Button style={{ marginBottom: 15 }} onPress={() => this.enroll()}>
+      <Button style={{ marginBottom: 15, backgroundColor: 'green' }} onPress={() => this.enroll()}>
         <Text style={globalStyles.buttonText}>ENROLL</Text>
       </Button>
     );

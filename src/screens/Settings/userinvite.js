@@ -53,13 +53,12 @@ class UserInvite extends Component {
       const re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 
       if (re.test(lowercaseEmail)) {
-          firebase.firestore().collection('invitedUsers').where('email', '==', lowercaseEmail).get().then(function(querySnapshot){
-              console.log(querySnapshot);
+          firebase.firestore().collection('invitedUsers').where('email', '==', lowercaseEmail).get().then((querySnapshot) => {
               if (querySnapshot.docs.length > 0) {
                   alert('This email has already been invited.');
                   this.setState({ loading: false });
               } else {
-                  firebase.firestore().collection('users').where('email', '==', lowercaseEmail).get().then(function(querySnapshot){
+                  firebase.firestore().collection('users').where('email', '==', lowercaseEmail).get().then((querySnapshot) => {
                       if (querySnapshot.docs.length > 0) {
                           alert('An account with this email address has already been created.');
                           this.setState({ loading: false });
@@ -86,8 +85,8 @@ class UserInvite extends Component {
                           }).then(() => {
                               alert('User has been invited. They can now download the app and create an account!');
                               this.setState({ submitted: true });
-                          }).bind(this);
-                      }
+                          })
+                    }
                   });
               }
           });

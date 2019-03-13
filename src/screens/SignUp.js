@@ -128,9 +128,11 @@ export default class SignUp extends Component {
                             .where('email', '==', eml)
                             .get().then((querySnapshot) => {
                         if (querySnapshot.docs != 0) {
-                            firebase.auth().createUserWithEmailAndPassword(eml, Password).then((userCred) => {
-                                const uid = userCred.user.uid
-                                firebase.firestore().collection('users').doc(uid).set(toAdd).then(() => {
+                            firebase.auth().createUserWithEmailAndPassword(eml, Password).then((usercred) => {
+                                const uid = usercred.user.uid
+                                firebase.firestore().collection('users').doc(`${uid}`).set(toAdd).then(() => {
+                                    console.log("GOT HERE");
+                                    console.log(toAdd);
                                     firebase.firestore().collection('invitedUsers').where('email', '==', eml).get().then((querySnapshot) => {
                                         querySnapshot.forEach(function(doc) {
                                           doc.ref.delete();
@@ -231,7 +233,6 @@ export default class SignUp extends Component {
         let error = '';
         if (this.props.error) error = this.props.error;
         const {
-          focus,
           Email,
           Password,
           Confirm_password,

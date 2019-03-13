@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, TextInput, View, Text } from 'react-native';
+import { TouchableOpacity, TextInput, View, Text, ScrollView } from 'react-native';
 import CheckBox from 'react-native-check-box';
 import { Screen, Button, Divider } from '../../components';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Tile, Title, FormGroup, Subtitle, Spinner, Icon } from '@shoutem/ui';
 import globalStyles, { headerStyles } from '../../theme';
 import { getCurrentUserData } from '../../utils';
@@ -47,7 +46,7 @@ export default class RideSignup extends Component {
         number: phoneNumber,
         comments: '',
         email: email,
-        error: '',
+        error: false,
         loading: false,
         signedUp: localSignupState,
       };
@@ -65,19 +64,20 @@ export default class RideSignup extends Component {
   onChangeName = name => (this.setState({ name }))
 
   signUp = () => {
-    this.setState({ error: '', loading: true });
+    this.setState({ error: false, loading: true });
     const { name, address, number, comments, email, morning, evening, staying, driver } = this.state;
     const { currentUser } = firebase.auth();
     var uid = currentUser.uid;
     let time = '';
+    time += driver ? 'Driver, ' : '';
     time += morning ? 'Morning, ' : '';
     time += evening ? 'Evening, ' : '';
     time += staying ? 'Staying' : '';
-    if (name === '' || address === '' || number === '' || number === '' || email === '' || time === '') {
-      this.scroll.scrollToPosition(0, 0, true);
-      return this.setState({ error: 'Please fill out all fields' });
+    if (name === '' || address === '' || number === '' || email === '' || time === '') {
+      alert('Please fill out all fields');
+      return this.setState({ error: true });
     }
-    const timestamp = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })
+    const timestamp = firebase.firestore.Timestamp.fromDate(new Date("December 14, 1996"));
     if(currentUser.email !== email) {
       uid = "";
     }
@@ -100,7 +100,7 @@ export default class RideSignup extends Component {
   }
 
   renderButton = () => {
-    if (this.state.loading && this.state.error != 'Please fill out all fields') {
+    if (this.state.loading && !this.state.error) {
       return (
         <Button style={{ paddingVertical: 15 }}>
           <Spinner style={{ color: '#fff' }}/>
@@ -115,7 +115,7 @@ export default class RideSignup extends Component {
   }
 
   render = () => {
-    const { name, address, number, comments, email, morning, evening, staying, error, driver, signedUp } = this.state;
+    const { name, address, number, comments, email, morning, evening, staying, driver, signedUp } = this.state;
     if (signedUp == true){
       return (
         <Screen>
@@ -128,13 +128,10 @@ export default class RideSignup extends Component {
     }
     return (
       <Screen>
-        <KeyboardAwareScrollView ref={(c) => { this.scroll = c; }}>
+        <ScrollView>
         <Tile style={{ paddingTop: 20, paddingBottom: 0, flex: 0.8, backgroundColor: 'transparent' }} styleName='text-centric'>
           <Title>Do It!</Title>
             <Subtitle>Sign up for a ride to church for this coming Sunday</Subtitle>
-            {(error.length > 0) &&
-              <Text style={{ color: '#b40a34', paddingBottom: 20, fontWeight: 'bold' }}>{error}</Text>
-            }
           </Tile>
           <FormGroup style={{ paddingHorizontal: 25, flex: 0.56 }}>
           <View style={{ paddingBottom: 4, flexDirection: 'row'}}>
@@ -255,7 +252,7 @@ export default class RideSignup extends Component {
           <Divider />
           {this.renderButton()}
         </FormGroup>
-        </KeyboardAwareScrollView>
+        </ScrollView>
       </Screen>
     );
   }
