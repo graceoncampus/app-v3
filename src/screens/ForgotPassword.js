@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Platform, StatusBar } from 'react-native';
-import { Title, Caption, Tile, Subtitle, FormGroup, Spinner, Icon } from '@shoutem/ui';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { Tile, Subtitle, FormGroup, Spinner } from '@shoutem/ui';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Button, Divider, Screen } from '../components';
 import globalStyles, { headerStyles } from '../theme';
@@ -32,6 +32,7 @@ export default class ForgotPassword extends Component {
             submitted: false,
         };
         this.onChangeEmail = this.onChangeEmail.bind(this);
+        this.reset = this.reset.bind(this);
     }
 
     /* CHANGES EMAIL */
@@ -47,10 +48,11 @@ export default class ForgotPassword extends Component {
         const { Email } = this.state;
         const auth = firebase.auth();
         auth.sendPasswordResetEmail(Email).then(() => {
-            alert('A password reset email has been sent to your email address.');
+            Alert.alert('', 'A password reset email has been sent to your email address!');
             this.setState({ submitted: true });
+            this.props.navigation.goBack();
         }).catch(() => {
-            alert('An account with this email address has not been created before.');
+            Alert.alert('', 'An account with this email address has not been created before');
             this.setState({ loading: false });
         });
     }
@@ -103,7 +105,7 @@ export default class ForgotPassword extends Component {
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                             autoCapitalize='none'
                             autoCorrect= {false}
-                            placeholder="chessrocks1221@gmail.com"
+                            placeholder="gocwebteam@gmail.com"
                             onChangeText={this.onChangeEmail}
                             returnKeyType='next'
                         />
@@ -112,9 +114,6 @@ export default class ForgotPassword extends Component {
                             {this.renderButton()}
                         </View>
                     </FormGroup>
-                    <Divider />
-                    <Divider />
-                    <Divider />
                 </KeyboardAwareScrollView>
             </Screen>
         );

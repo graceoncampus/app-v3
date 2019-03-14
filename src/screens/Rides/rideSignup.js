@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, TextInput, View, Text, ScrollView } from 'react-native';
+import { TouchableOpacity, TextInput, View, Text, ScrollView, Alert } from 'react-native';
 import CheckBox from 'react-native-check-box';
 import { Screen, Button, Divider } from '../../components';
 import { Tile, Title, FormGroup, Subtitle, Spinner, Icon } from '@shoutem/ui';
@@ -69,12 +69,15 @@ export default class RideSignup extends Component {
     const { currentUser } = firebase.auth();
     var uid = currentUser.uid;
     let time = '';
-    time += driver ? 'Driver, ' : '';
     time += morning ? 'Morning, ' : '';
     time += evening ? 'Evening, ' : '';
     time += staying ? 'Staying' : '';
-    if (name === '' || address === '' || number === '' || email === '' || time === '') {
-      alert('Please fill out all fields');
+    if (name === '' || address === '' || number === '' || email === '') {
+      Alert.alert('', 'Please fill out all fields');
+      return this.setState({ error: true });
+    }
+    if (time === '') {
+      Alert.alert('', 'Please select a which services you would like to attend');
       return this.setState({ error: true });
     }
     const timestamp = firebase.firestore.Timestamp.fromDate(new Date("December 14, 1996"));

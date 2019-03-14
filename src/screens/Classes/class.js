@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { TouchableOpacity, Alert } from "react-native";
-import { Title, View, Text, Caption, ScrollView } from "@shoutem/ui";
+import { Title, View, Text, ScrollView } from "@shoutem/ui";
 import { Button, Divider, Screen, Text as CustomText } from "../../components";
 import firebase from "react-native-firebase";
 import globalStyles, { headerStyles } from "../../theme";
@@ -85,7 +85,6 @@ export default class classDetails extends Component {
     });
   }
 
-  // NEED TO MAKE UNENROLL AND CLASS FULL BUTTONS RED
   renderButton() {
     const { openSpots, isEnrolled } = this.state.data;
     if (openSpots == 0 && !isEnrolled) {
@@ -223,7 +222,7 @@ export default class classDetails extends Component {
           styleName="vertical h-center v-end v-center"
         >
           {permissions != null && permissions.classes === 1 && (
-            <Button
+            <Button clear
               style={{ marginBottom: 15 }}
               onPress={() => {
                 this.props.navigation.navigate("ClassEnrollment", {
@@ -231,7 +230,7 @@ export default class classDetails extends Component {
                 });
               }}
             >
-              <CustomText style={globalStyles.buttonText}>
+              <CustomText style={globalStyles.buttonTextGold}>
                 VIEW ENROLLMENT
               </CustomText>
             </Button>

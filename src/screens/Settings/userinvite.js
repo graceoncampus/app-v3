@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { Title, Caption, Tile, Subtitle, FormGroup, Spinner } from '@shoutem/ui';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { Title, Tile, Subtitle, FormGroup, Spinner } from '@shoutem/ui';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Button, Divider, Screen } from '../../components';
 import globalStyles, { headerStyles } from '../../theme';
@@ -55,12 +55,12 @@ class UserInvite extends Component {
       if (re.test(lowercaseEmail)) {
           firebase.firestore().collection('invitedUsers').where('email', '==', lowercaseEmail).get().then((querySnapshot) => {
               if (querySnapshot.docs.length > 0) {
-                  alert('This email has already been invited.');
+                  Alert.alert('', 'This email has already been invited');
                   this.setState({ loading: false });
               } else {
                   firebase.firestore().collection('users').where('email', '==', lowercaseEmail).get().then((querySnapshot) => {
                       if (querySnapshot.docs.length > 0) {
-                          alert('An account with this email address has already been created.');
+                          Alert.alert('', 'An account with this email address has already been created');
                           this.setState({ loading: false });
                       } else {
                           const details = {
@@ -83,7 +83,7 @@ class UserInvite extends Component {
                                 'Content-Type': 'application/x-www-form-urlencoded',
                               },
                           }).then(() => {
-                              alert('User has been invited. They can now download the app and create an account!');
+                              Alert.alert('', 'User has been invited. They can now download the app and create an account!');
                               this.setState({ submitted: true });
                           })
                     }
@@ -91,7 +91,7 @@ class UserInvite extends Component {
               }
           });
       } else {
-          alert('Please enter a valid email address');
+          Alert.alert('', 'Please enter a valid email address');
           this.setState({ loading: false });
       }
   }

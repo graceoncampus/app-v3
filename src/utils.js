@@ -130,6 +130,10 @@ export const setCurrentUserData = (data) => {
   thisUserData = data;
 }
 
+export const updateCurrentUserData = (data) => {
+  thisUserData = Object.assign(thisUserData, data);
+}
+
 export const getCurrentUserData = () => {
   return thisUserData;
 }

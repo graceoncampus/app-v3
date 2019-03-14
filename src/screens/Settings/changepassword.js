@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { Title, Caption, Tile, Subtitle, FormGroup, Spinner } from '@shoutem/ui';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { Title, Tile, FormGroup, Spinner } from '@shoutem/ui';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Button, Divider, Screen } from '../../components';
 import globalStyles, { headerStyles } from '../../theme';
@@ -31,6 +31,7 @@ class ChangePassword extends Component {
             newPassword: '',
             confirmNewPassword: '',
         };
+        this.change = this.change.bind(this);
         this.onChangeOld = this.onChangeOld.bind(this);
         this.onChangeNew = this.onChangeNew.bind(this);
         this.onChangeConfirm = this.onChangeConfirm.bind(this);
@@ -64,22 +65,25 @@ class ChangePassword extends Component {
         } = this.state;
         if (newPassword.length < 6) {
             this.setState({ newPassword: '', confirmNewPassword: '', loading: false });
+            Alert.alert('', 'Password needs to be at least 6 characters');
         } else if (newPassword !== confirmNewPassword) {
             this.setState({ newPassword: '', confirmNewPassword: '', loading: false });
+            Alert.alert('', 'Passwords you entered do not match');
         } else {
             const { currentUser } = firebase.auth();
             const email = currentUser.email;
             firebase.auth().signInWithEmailAndPassword(email, oldPassword)
             .then(() => {
                 firebase.auth().currentUser.updatePassword(newPassword).then(() => {
-                    alert('Password change successful');
+                    Alert.alert('', 'Password change successful');
                     this.setState({ loading: false, submitted: true });
+                    this.props.navigation.goBack();
                 }, () => {
-                    alert('Password change failed');
+                    Alert.alert('', 'Password change failed');
                     this.setState({ loading: false });
                 });
             }).catch(() => {
-                alert('Old password incorrect');
+                Alert.alert('', 'Current password is incorrect');
                 this.setState({ loading: false });
             });
         }
@@ -129,7 +133,7 @@ class ChangePassword extends Component {
 
                     <FormGroup style={{ paddingHorizontal: 25, flex: 0.56 }}>
                         <View style={{ paddingTop: 12, paddingBottom: 4, flexDirection: 'row'}}>
-                            <Text style={globalStyles.label}>Old Password </Text>
+                            <Text style={globalStyles.label}>Current Password </Text>
                         </View>
                         <TextInput
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}

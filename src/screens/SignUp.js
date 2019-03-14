@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, AsyncStorage, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, AsyncStorage, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Title, Tile, Subtitle, FormGroup, Spinner } from '@shoutem/ui';
 import { Button, Divider, Screen } from '../components';
 import globalStyles, { headerStyles } from '../theme';
@@ -104,22 +104,22 @@ export default class SignUp extends Component {
         let error = false;
         if (First_name === '' || Last_name === '' || Email === '' || Password === '' || Confirm_password === '' || Phone_number === '' || Graduation_year === '') {
             this.setState({ loading: false });
-            alert('Please fill out all required fields');
+            Alert.alert('', 'Please fill out all required fields');
             error = true;
         }
         else if (Confirm_password !== Password) {
             this.setState({ loading: false });
-            alert('Passwords do not match');
+            Alert.alert('', 'Passwords do not match');
             error = true;
         }
         else if (Password.length < 6) {
             this.setState({ loading: false });
-            alert('Password must be at least 6 characters');
+            Alert.alert('', 'Password must be at least 6 characters');
             error = true;
         }
         else if (Phone_number.length !== 10) {
             this.setState({ loading: false });
-            alert('Please enter your 10 digit phone number');
+            Alert.alert('', 'Please enter your 10 digit phone number');
             error = true;
         }
 
@@ -128,7 +128,7 @@ export default class SignUp extends Component {
             const query = ref.where('email', '==', eml);
             query.get().then((querySnapshot) => {
                 if (!querySnapshot.empty) {
-                    alert('An account with this email has already been created');
+                    Alert.alert('', 'An account with this email has already been created');
                     this.setState({ loading: false });
                 } else {
                     firebase.firestore()
@@ -145,12 +145,12 @@ export default class SignUp extends Component {
                                     invitedUsers.forEach(async doc => await doc.ref.delete());
                                     this.props.navigation.goBack();
                                 } catch (err) {
-                                    alert(err.message);
+                                    Alert.alert('', err.message);
                                     this.setState({ loading: false });
                                     AsyncStorage.setItem('sign_up', 'false');
                                 }
                             } else {
-                                alert('This email has not been invited to create an account. Contact us at gocwebteam@gmail.com to get an invite.');
+                                Alert.alert('', 'This email has not been invited to create an account. Contact us at gocwebteam@gmail.com to get an invite.');
                                 this.setState({ loading: false });
                             }
                         })
@@ -234,8 +234,6 @@ export default class SignUp extends Component {
     }
 
     render() {
-        const { loading, submitted } = this.state;
-        let error = '';
         if (this.props.error) error = this.props.error;
         const {
           Email,
@@ -273,7 +271,7 @@ export default class SignUp extends Component {
                             autoCapitalize = 'none'
                             autoCorrect = {false}
                             autoComplete={false}
-                            placeholder ="Jane"
+                            placeholder ="Chris"
                             value = {First_name}
                             onChangeText = {this.onChangeFirstName}
                             returnKeyType = 'next'
@@ -287,7 +285,7 @@ export default class SignUp extends Component {
                             autoCapitalize ='none'
                             autoCorrect = {false}
                             autoComplete={false}
-                            placeholder = "Zhang"
+                            placeholder = "Gee"
                             value = {Last_name}
                             onChangeText = {this.onChangeLastName}
                             returnKeyType ='next'
@@ -301,7 +299,7 @@ export default class SignUp extends Component {
                             autoCapitalize = 'none'
                             autoCorrect = {false}
                             autoComplete={false}
-                            placeholder = "chessrocks1221@gmail.com"
+                            placeholder = "gocwebteam@gmail.com"
                             keyboardType = "email-address"
                             value = {Email}
                             onChangeText = {this.onChangeEmail}
@@ -315,7 +313,7 @@ export default class SignUp extends Component {
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                             value = {Password}
                             autoComplete={false}
-                            placeholder = "iluvchess123"
+                            placeholder = "Password"
                             secureTextEntry
                             onChangeText = {this.onChangePassword}
                             returnKeyType='next'
@@ -328,7 +326,7 @@ export default class SignUp extends Component {
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
                             value = {Confirm_password}
                             autoComplete={false}
-                            placeholder = "iluvchess123"
+                            placeholder = "Confirm Password"
                             secureTextEntry
                             onChangeText = {this.onChangeConfirmPassword}
                             returnKeyType = 'next'
@@ -339,7 +337,7 @@ export default class SignUp extends Component {
                         </View>
                         <TextInput
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
-                            placeholder = "Yo digits"
+                            placeholder = "Number"
                             value = {Phone_number}
                             autoComplete={false}
                             keyboardType = 'phone-pad'
@@ -417,7 +415,7 @@ export default class SignUp extends Component {
                         </View>
                         <TextInput
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
-                            placeholder = "Basket Weaving"
+                            placeholder = "Science"
                             value = {Major}
                             autoComplete={false}
                             onChangeText = {this.onChangeMajor}
@@ -428,7 +426,7 @@ export default class SignUp extends Component {
                         </View>
                         <TextInput
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
-                            placeholder = "Grace Community Church"
+                            placeholder = "Church"
                             value = {Home_church}
                             autoComplete={false}
                             onChangeText = {this.onChangeHomeChurch}
@@ -439,7 +437,7 @@ export default class SignUp extends Component {
                         </View>
                         <TextInput
                             style={{color: '#202020', paddingLeft: 10, height: 42, backgroundColor: '#F0F0F0'}}
-                            placeholder = "424 Veteran Ave"
+                            placeholder = "De Neve"
                             value = {Address}
                             autoComplete={false}
                             onChangeText = {this.onChangeAddress}
@@ -448,9 +446,6 @@ export default class SignUp extends Component {
                         <Divider />
                         {this.renderButton()}
                     </FormGroup>
-                    <Divider />
-                    <Divider />
-                    <Divider />
                 </KeyboardAwareScrollView>
             </Screen>
         );
