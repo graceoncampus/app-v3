@@ -77,11 +77,11 @@ export default class RideSignup extends Component {
       return this.setState({ error: true });
     }
     if (time === '') {
-      Alert.alert('', 'Please select a which services you would like to attend');
+      Alert.alert('', 'Please select which services you would like to attend');
       return this.setState({ error: true });
     }
-    const timestamp = firebase.firestore.Timestamp.fromDate(new Date("December 14, 1996"));
-    if(currentUser.email !== email) {
+    const timestamp = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' });
+    if(currentUser.email !== email) { // set uid to be empty string if current user email is not same as the email of person signing up for ride, do this in event someone signs up for ride using someone else's phone
       uid = "";
     }
     const postData = { name, address, number, comments, email, driver, morning, evening, staying, uid, timestamp };
