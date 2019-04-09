@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { ScrollView, View, TouchableOpacity } from 'react-native';
-import { Spinner } from '@shoutem/ui';
+import {
+  View, TouchableOpacity, ActivityIndicator, FlatList
+} from 'react-native';
 import firebase from 'react-native-firebase';
 
 import Announcement from './announcement';
@@ -9,63 +10,6 @@ import { Screen } from '../../components';
 import globalStyles, { headerStyles } from '../../theme';
 
 export default class Home extends Component {
-  constructor(props) {
-    super(props);
-    this.ref = firebase.firestore().collection('announcements').orderBy('date', 'desc');
-    this.userRef = firebase.firestore().collection('users')
-      .doc(firebase.auth().currentUser.uid);
-    this.unsubscribe = null;
-    this.state = {
-      posts: [],
-      readList: props.navigation.getParam('readList', []) || [],
-      admin: false,
-      loading: true,
-    };
-  }
-
-  componentDidMount() {
-    this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
-    this.unsubscribeRead = this.userRef.onSnapshot(this.readListUpdate);
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe();
-    this.unsubscribeRead();
-  }
-
-  onCollectionUpdate = (querySnapshot) => {
-    let i = 0;
-    const iMax = querySnapshot.docs.length;
-    const posts = new Array(iMax);
-    for (; i < iMax; i += 1) {
-      const doc = querySnapshot.docs[i];
-      posts[i] = {
-        key: doc.id,
-        ...doc.data(),
-      };
-    }
-    this.setState({
-      posts,
-      loading: false,
-    });
-    firebase.notifications().setBadge(this.state.posts.length - this.state.readList.length);
-  }
-
-  readListUpdate = (querySnapshot) => {
-    this.setState({ readList: querySnapshot.data().readList || [] });
-    firebase.notifications().setBadge(this.state.posts.length - this.state.readList.length);
-  }
-  // async componentDidMount() {
-  //   const perms = await AsyncStorage.getItem('perms')
-  //   const readList = await AsyncStorage.getItem('read')
-  //   .then((perms) => {
-
-  //   }).catch(() => (console.warn('no perms')));
-  //   .then(readList => this.setState({ readList: JSON.parse(readList) });
-  //     else this.setState({ readList: [] });
-  //   }).catch(() => (console.warn('none read')));
-  // }
-
   static navigationOptions = ({ navigation }) => {
     const { admin } = navigation.getParam('permissions', {
       admin: 0,
@@ -81,7 +25,7 @@ export default class Home extends Component {
         </TouchableOpacity>
       ),
       headerRight: admin && (
-        <TouchableOpacity style={{ padding: 15 }} onPress={() => navigation.navigate('EditPost')}>
+        <TouchableOpacity style={{ marginRight: 10 }} onPress={() => navigation.navigate('EditPost')}>
           <New />
         </TouchableOpacity>
       ),
@@ -89,70 +33,99 @@ export default class Home extends Component {
     });
   }
 
-  isRead = (announcement) => {
-    let result = false;
-    const { readList } = this.state;
-    let i = 0;
-    const iMax = readList.length;
-    for (; i < iMax; i += 1) {
-      if (readList[i] === announcement.key) result = true;
-    }
-    return result;
+
+  constructor(props) {
+    super(props);
+    this.ref = firebase.firestore().collection('announcements').orderBy('date', 'desc');
+    this.userRef = firebase.firestore().collection('users')
+      .doc(firebase.auth().currentUser.uid);
+    this.unsubscribe = null;
+    this.state = {
+      posts: [],
+      readList: props.navigation.getParam('readList', []) || [],
+      loading: true,
+    };
   }
+
+  componentDidMount() {
+    this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
+    this.unsubscribeRead = this.userRef.onSnapshot(this.readListUpdate);
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
+    this.unsubscribeRead();
+  }
+
+  onCollectionUpdate = (querySnapshot) => {
+    const { readList } = this.state;
+    const posts = [];
+    querySnapshot.forEach((post) => {
+      const data = post.data();
+      posts.push({
+        key: post.id,
+        ...data,
+        isRead: readList.includes(post.id)
+      });
+    });
+    this.setState({
+      posts,
+      loading: false,
+    });
+    firebase.notifications().setBadge(posts.length - readList.length);
+  }
+
+  readListUpdate = (querySnapshot) => {
+    const { posts, readList } = this.state;
+    this.setState({ readList: querySnapshot.data().readList || [] });
+    firebase.notifications().setBadge(posts.length - readList.length);
+  }
+
 
   setRead = (announcement) => {
-    const { admin } = this.props.navigation.getParam('permissions', {
+    const { navigation } = this.props;
+    const { readList } = this.state;
+    const { admin } = navigation.getParam('permissions', {
       admin: 0,
     });
-    if (this.isRead(announcement)) {
-      this.props.navigation.navigate('Post', { admin, announcement, title: announcement.title });
-    } else {
+    if (!announcement.isRead) {
       firebase.firestore().collection('users').doc(firebase.auth().currentUser.uid).update({
-        readList: this.state.readList.concat(announcement.key),
+        readList: readList.concat(announcement.key),
       });
-      this.props.navigation.navigate('Post', { admin, announcement, title: announcement.title });
     }
+    navigation.navigate('Post', { admin, announcement });
   };
 
-  renderRows = () => {
-    const { posts } = this.state;
-    let i = 0;
-    const iMax = posts.length;
-    const res = new Array(iMax);
-    for (; i < iMax; i += 1) {
-      const announcement = posts[i];
-      res[i] = (
-        <Announcement
-          key={announcement.key}
-          setRead={this.setRead}
-          announcement={announcement}
-          isRead={this.isRead(announcement)}
-        />
-      );
-    }
-    return res;
-  }
+  renderAnnouncement = announcement => (
+    <Announcement
+      key={announcement.key}
+      setRead={this.setRead}
+      announcement={announcement.item}
+    />
+  )
 
   render() {
-    if (!this.state.loading) {
-      return (
-        <Screen>
-          <ScrollView>
-            { this.renderRows() }
-          </ScrollView>
-        </Screen>
-      );
-    }
+    const { loading, posts } = this.state;
     return (
-      <Screen>
-        <View style={[
-          globalStyles.vertical,
-          globalStyles.vvCenter,
-          globalStyles.vhCenter,
-          globalStyles.fillParent,
-        ]}>
-          <Spinner size="large" />
-        </View>
+      <Screen safeViewDisabled>
+        {
+          !loading ? (
+            <Screen safeViewDisabled>
+              <FlatList data={posts} renderItem={this.renderAnnouncement} />
+            </Screen>
+          )
+            : (
+              <View style={[
+                globalStyles.vertical,
+                globalStyles.vvCenter,
+                globalStyles.vhCenter,
+                globalStyles.fillParent,
+              ]}
+              >
+                <ActivityIndicator />
+              </View>
+            )
+        }
       </Screen>
     );
   }

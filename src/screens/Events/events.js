@@ -1,110 +1,114 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, ScrollView, View } from 'react-native';
-import { Screen } from '../../components';
-import { ListView, Image, Divider, Spinner, Tile } from '@shoutem/ui';
+import {
+  TouchableOpacity,
+  View,
+  FlatList,
+  ActivityIndicator,
+  Dimensions
+} from 'react-native';
+import firebase from 'react-native-firebase';
+import FastImage from 'react-native-fast-image';
+import { Screen, Divider, Text } from '../../components';
 import { headerStyles } from '../../theme';
 import { Menu } from '../../icons';
-import { ScrollDriver } from '@shoutem/animation';
-import firebase from 'react-native-firebase';
 
 export default class Events extends Component {
-    static navigationOptions = ({ navigation }) => ({
-        drawer: () => ({
-          label: 'Events',
-        }),
-        title: 'EVENTS',
-        headerLeft: (
-          <TouchableOpacity style={{ padding: 15 }} onPress={() => navigation.openDrawer()}>
-            <Menu />
-          </TouchableOpacity>
-        ),
-        headerRight: (
-          <View />
-        ),
-        ...headerStyles,
-      })
+  static navigationOptions = ({ navigation }) => ({
+    drawer: () => ({
+      label: 'Events',
+    }),
+    title: 'EVENTS',
+    headerLeft: (
+      <TouchableOpacity style={{ padding: 15 }} onPress={() => navigation.openDrawer()}>
+        <Menu />
+      </TouchableOpacity>
+    ),
+    headerRight: (
+      <View />
+    ),
+    ...headerStyles,
+  })
 
   constructor(props) {
     super(props);
-    this.renderRow = this.renderRow.bind(this);
-    this.driver = new ScrollDriver();
     this.ref = firebase.firestore().collection('events').orderBy('startDate', 'desc');
     this.unsubscribe = null;
     this.state = {
-        events: [],
-        loading: true,
-    }
-  };
+      events: [],
+      loading: true,
+    };
+  }
 
   componentDidMount() {
-      this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
+    this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
   }
 
   componentWillUnmount() {
-      this.unsubscribe();
+    this.unsubscribe();
   }
 
   onCollectionUpdate = (querySnapshot) => {
-    var i = 0;
-    const iMax = querySnapshot.docs.length;
-    const events = new Array(iMax);
-    for (; i < iMax; i += 1) {
-      const doc = querySnapshot.docs[i];
-      events[i] = {
+    const events = [];
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      events.push({
         key: doc.id,
-        ...doc.data(),
-      };
-    }
+        ...data
+      });
+    });
     this.setState({
       events,
       loading: false,
     });
   }
 
-  renderRow(event) {
-    const { key, mobileImage } = event;
+  renderEvent = (event) => {
+    const { mobileImage, title } = event.item;
+    const { navigation } = this.props;
     return (
-        <TouchableOpacity key={key} onPress={() => { this.props.navigation.navigate('Event', { event, title:event.title }); }} >
-        <Image
-          styleName="large-banner"
+      <TouchableOpacity key={event.key} onPress={() => { navigation.navigate('Event', { event: event.item, title }); }}>
+        <FastImage
+          style={{
+            height: 200,
+            flex: 1,
+            width: Dimensions.get('window').width
+          }}
           source={{ uri: mobileImage === '' ? 'https://placeimg.com/640/480/nature' : mobileImage }}
-        >
-        </Image>
-        <Divider styleName='line' />
+          resizeMode={FastImage.resizeMode.cover}
+        />
+        <Divider styleName="line" />
       </TouchableOpacity>
     );
   }
 
 
   render = () => {
-    if (!this.state.loading) {
+    const { loading, events } = this.state;
+    if (!loading) {
       return (
         <Screen>
-          <ScrollView {...this.driver.scrollViewProps}>
-            <ListView
-              data={this.state.events}
-              renderRow={this.renderRow}
-            />
-          </ScrollView>
+          <FlatList
+            data={events}
+            renderItem={this.renderEvent}
+          />
         </Screen>
       );
     }
-    if (!this.state.loading && this.state.events == []) {
+    if (!loading && events === []) {
       return (
         <Screen>
-          <Tile style={{ paddingBottom: 0, flex: 0.8, backgroundColor: 'transparent' }} styleName='text-centric'>
-            <Title>Looks like there's no upcoming events!</Title>
-          </Tile>
+          <View style={{ paddingBottom: 0, flex: 0.8, backgroundColor: 'transparent' }} styleName="text-centric">
+            <Text>Looks like there's no upcoming events!</Text>
+          </View>
         </Screen>
-      )
+      );
     }
     return (
       <Screen>
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Spinner size="large" />
-          </View>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <ActivityIndicator />
+        </View>
       </Screen>
     );
   }
 }
-  

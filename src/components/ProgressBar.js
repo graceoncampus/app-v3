@@ -26,7 +26,6 @@ const styles = StyleSheet.create({
 
 export default class ProgressBar extends React.Component {
   state = {
-    status: 0,
     progress: new Animated.Value(0),
   };
 
@@ -42,30 +41,33 @@ export default class ProgressBar extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.progress >= 0 && this.props.progress !== prevProps.progress) {
+    const { progress } = this.props;
+    if (progress >= 0 && progress !== prevProps.progress) {
       this.update();
     }
   }
 
+  update = () => {
+    const { progress, easing, easingDuration } = this.state;
+    Animated.timing(progress, {
+      easing,
+      duration: easingDuration,
+      toValue: progress,
+    }).start();
+  }
 
   render() {
-    const fillWidth = this.state.progress.interpolate({
+    const { progress } = this.state;
+    const { style, fillStyle, backgroundStyle } = this.props;
+    const fillWidth = progress.interpolate({
       inputRange: [0, 1],
-      outputRange: [0 * this.props.style.width, 1 * this.props.style.width],
+      outputRange: [0 * style.width, 1 * style.width],
     });
 
     return (
-      <View style={[styles.background, this.props.backgroundStyle, this.props.style]}>
-        <Animated.View style={[styles.fill, this.props.fillStyle, { width: fillWidth }]}/>
+      <View style={[styles.background, backgroundStyle, style]}>
+        <Animated.View style={[styles.fill, fillStyle, { width: fillWidth }]} />
       </View>
     );
-  }
-
-  update = () => {
-    Animated.timing(this.state.progress, {
-      easing: this.props.easing,
-      duration: this.props.easingDuration,
-      toValue: this.props.progress,
-    }).start();
   }
 }

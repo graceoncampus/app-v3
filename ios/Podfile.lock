@@ -1,13 +1,19 @@
 PODS:
+  - Base64 (1.1.2)
   - boost-for-react-native (1.63.0)
-  - BoringSSL (10.0.6):
-    - BoringSSL/Implementation (= 10.0.6)
-    - BoringSSL/Interface (= 10.0.6)
-  - BoringSSL/Implementation (10.0.6):
-    - BoringSSL/Interface (= 10.0.6)
-  - BoringSSL/Interface (10.0.6)
-  - BVLinearGradient (2.4.4):
+  - BoringSSL-GRPC (0.0.3):
+    - BoringSSL-GRPC/Implementation (= 0.0.3)
+    - BoringSSL-GRPC/Interface (= 0.0.3)
+  - BoringSSL-GRPC/Implementation (0.0.3):
+    - BoringSSL-GRPC/Interface (= 0.0.3)
+  - BoringSSL-GRPC/Interface (0.0.3)
+  - BVLinearGradient (2.5.4):
     - React
+  - CodePush (5.6.0):
+    - Base64 (~> 1.1)
+    - JWT (~> 3.0.0-beta.7)
+    - React
+    - SSZipArchive (~> 2.1)
   - DoubleConversion (1.1.6)
   - Firebase/Auth (5.9.0):
     - Firebase/CoreOnly
@@ -20,6 +26,9 @@ PODS:
   - Firebase/Firestore (5.9.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (= 0.13.4)
+  - Firebase/Functions (5.9.0):
+    - Firebase/CoreOnly
+    - FirebaseFunctions (= 2.1.1)
   - Firebase/Messaging (5.9.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (= 3.1.2)
@@ -57,6 +66,9 @@ PODS:
     - leveldb-library (~> 1.20)
     - nanopb (~> 0.3.8)
     - Protobuf (~> 3.1)
+  - FirebaseFunctions (2.1.1):
+    - FirebaseCore (~> 5.0)
+    - GTMSessionFetcher/Core (~> 1.1)
   - FirebaseInstanceID (3.3.0):
     - FirebaseCore (~> 5.1)
     - GoogleUtilities/Environment (~> 5.3)
@@ -66,7 +78,8 @@ PODS:
     - FirebaseInstanceID (~> 3.0)
     - GoogleUtilities/Reachability (~> 5.2)
     - Protobuf (~> 3.1)
-  - Folly (2016.10.31.00):
+  - FLAnimatedImage (1.0.12)
+  - Folly (2018.10.22.00):
     - boost-for-react-native
     - DoubleConversion
     - glog
@@ -77,113 +90,162 @@ PODS:
     - GoogleUtilities/Network (~> 5.2)
     - "GoogleUtilities/NSData+zlib (~> 5.2)"
     - nanopb (~> 0.3)
-  - GoogleUtilities/AppDelegateSwizzler (5.3.4):
+  - GoogleUtilities/AppDelegateSwizzler (5.5.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
-  - GoogleUtilities/Environment (5.3.4)
-  - GoogleUtilities/Logger (5.3.4):
+  - GoogleUtilities/Environment (5.5.0)
+  - GoogleUtilities/Logger (5.5.0):
     - GoogleUtilities/Environment
-  - GoogleUtilities/MethodSwizzler (5.3.4):
+  - GoogleUtilities/MethodSwizzler (5.5.0):
     - GoogleUtilities/Logger
-  - GoogleUtilities/Network (5.3.4):
+  - GoogleUtilities/Network (5.5.0):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (5.3.4)"
-  - GoogleUtilities/Reachability (5.3.4):
+  - "GoogleUtilities/NSData+zlib (5.5.0)"
+  - GoogleUtilities/Reachability (5.5.0):
     - GoogleUtilities/Logger
-  - GoogleUtilities/UserDefaults (5.3.4):
+  - GoogleUtilities/UserDefaults (5.5.0):
     - GoogleUtilities/Logger
-  - gRPC (1.14.0):
-    - gRPC-RxLibrary (= 1.14.0)
-    - gRPC/Main (= 1.14.0)
-  - "gRPC-C++ (0.0.3)":
-    - "gRPC-C++/Implementation (= 0.0.3)"
-    - "gRPC-C++/Interface (= 0.0.3)"
-  - "gRPC-C++/Implementation (0.0.3)":
-    - "gRPC-C++/Interface (= 0.0.3)"
-    - gRPC-Core (= 1.14.0)
+  - gRPC (1.19.0):
+    - gRPC-RxLibrary (= 1.19.0)
+    - gRPC/Main (= 1.19.0)
+  - "gRPC-C++ (0.0.8)":
+    - "gRPC-C++/Implementation (= 0.0.8)"
+    - "gRPC-C++/Interface (= 0.0.8)"
+  - "gRPC-C++/Implementation (0.0.8)":
+    - "gRPC-C++/Interface (= 0.0.8)"
+    - gRPC-Core (= 1.19.0)
     - nanopb (~> 0.3)
-  - "gRPC-C++/Interface (0.0.3)"
-  - gRPC-Core (1.14.0):
-    - gRPC-Core/Implementation (= 1.14.0)
-    - gRPC-Core/Interface (= 1.14.0)
-  - gRPC-Core/Implementation (1.14.0):
-    - BoringSSL (~> 10.0)
-    - gRPC-Core/Interface (= 1.14.0)
+  - "gRPC-C++/Interface (0.0.8)"
+  - gRPC-Core (1.19.0):
+    - gRPC-Core/Implementation (= 1.19.0)
+    - gRPC-Core/Interface (= 1.19.0)
+  - gRPC-Core/Implementation (1.19.0):
+    - BoringSSL-GRPC (= 0.0.3)
+    - gRPC-Core/Interface (= 1.19.0)
     - nanopb (~> 0.3)
-  - gRPC-Core/Interface (1.14.0)
-  - gRPC-ProtoRPC (1.14.0):
-    - gRPC-ProtoRPC/Main (= 1.14.0)
-  - gRPC-ProtoRPC/Main (1.14.0):
-    - gRPC (= 1.14.0)
-    - gRPC-RxLibrary (= 1.14.0)
+  - gRPC-Core/Interface (1.19.0)
+  - gRPC-ProtoRPC (1.19.0):
+    - gRPC-ProtoRPC/Main (= 1.19.0)
+  - gRPC-ProtoRPC/Main (1.19.0):
+    - gRPC (= 1.19.0)
+    - gRPC-RxLibrary (= 1.19.0)
     - Protobuf (~> 3.0)
-  - gRPC-RxLibrary (1.14.0)
-  - gRPC/Main (1.14.0):
-    - gRPC-Core (= 1.14.0)
-    - gRPC-RxLibrary (= 1.14.0)
-  - GTMSessionFetcher/Core (1.2.0)
+  - gRPC-RxLibrary (1.19.0)
+  - gRPC/Main (1.19.0):
+    - gRPC-Core (= 1.19.0)
+    - gRPC-RxLibrary (= 1.19.0)
+  - GTMSessionFetcher/Core (1.2.1)
+  - JWT (3.0.0-beta.11):
+    - Base64 (~> 1.1.2)
   - leveldb-library (1.20)
+  - libwebp (1.0.2):
+    - libwebp/core (= 1.0.2)
+    - libwebp/dec (= 1.0.2)
+    - libwebp/demux (= 1.0.2)
+    - libwebp/dsp (= 1.0.2)
+    - libwebp/enc (= 1.0.2)
+    - libwebp/mux (= 1.0.2)
+    - libwebp/utils (= 1.0.2)
+    - libwebp/webp (= 1.0.2)
+  - libwebp/core (1.0.2):
+    - libwebp/webp
+  - libwebp/dec (1.0.2):
+    - libwebp/core
+  - libwebp/demux (1.0.2):
+    - libwebp/core
+  - libwebp/dsp (1.0.2):
+    - libwebp/core
+  - libwebp/enc (1.0.2):
+    - libwebp/core
+  - libwebp/mux (1.0.2):
+    - libwebp/core
+  - libwebp/utils (1.0.2):
+    - libwebp/core
+  - libwebp/webp (1.0.2)
   - nanopb (0.3.901):
     - nanopb/decode (= 0.3.901)
     - nanopb/encode (= 0.3.901)
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
-  - Protobuf (3.6.1)
-  - React (0.57.3):
-    - React/Core (= 0.57.3)
-  - React/Core (0.57.3):
-    - yoga (= 0.57.3.React)
-  - React/CxxBridge (0.57.3):
-    - Folly (= 2016.10.31.00)
+  - Protobuf (3.7.0)
+  - React (0.58.5):
+    - React/Core (= 0.58.5)
+  - react-native-fast-image (5.2.0):
+    - FLAnimatedImage
+    - React
+    - SDWebImage/Core
+    - SDWebImage/GIF
+    - SDWebImage/WebP
+  - React/Core (0.58.5):
+    - yoga (= 0.58.5.React)
+  - React/CxxBridge (0.58.5):
+    - Folly (= 2018.10.22.00)
     - React/Core
     - React/cxxreact
-  - React/cxxreact (0.57.3):
+    - React/jsiexecutor
+  - React/cxxreact (0.58.5):
     - boost-for-react-native (= 1.63.0)
-    - Folly (= 2016.10.31.00)
-    - React/jschelpers
+    - Folly (= 2018.10.22.00)
     - React/jsinspector
-  - React/DevSupport (0.57.3):
+  - React/DevSupport (0.58.5):
     - React/Core
     - React/RCTWebSocket
-  - React/fishhook (0.57.3)
-  - React/jschelpers (0.57.3):
-    - Folly (= 2016.10.31.00)
-    - React/PrivateDatabase
-  - React/jsinspector (0.57.3)
-  - React/PrivateDatabase (0.57.3)
-  - React/RCTAnimation (0.57.3):
+  - React/fishhook (0.58.5)
+  - React/jsi (0.58.5):
+    - Folly (= 2018.10.22.00)
+  - React/jsiexecutor (0.58.5):
+    - Folly (= 2018.10.22.00)
+    - React/cxxreact
+    - React/jsi
+  - React/jsinspector (0.58.5)
+  - React/RCTAnimation (0.58.5):
     - React/Core
-  - React/RCTBlob (0.57.3):
+  - React/RCTBlob (0.58.5):
     - React/Core
-  - React/RCTNetwork (0.57.3):
+  - React/RCTImage (0.58.5):
     - React/Core
-  - React/RCTText (0.57.3):
+    - React/RCTNetwork
+  - React/RCTNetwork (0.58.5):
     - React/Core
-  - React/RCTWebSocket (0.57.3):
+  - React/RCTText (0.58.5):
+    - React/Core
+  - React/RCTWebSocket (0.58.5):
     - React/Core
     - React/fishhook
     - React/RCTBlob
-  - RNVectorIcons (4.3.0):
+  - RNVectorIcons (6.4.2):
     - React
-  - yoga (0.57.3.React)
+  - SDWebImage/Core (4.4.6)
+  - SDWebImage/GIF (4.4.6):
+    - FLAnimatedImage (~> 1.0)
+    - SDWebImage/Core
+  - SDWebImage/WebP (4.4.6):
+    - libwebp (>= 0.5)
+    - SDWebImage/Core
+  - SSZipArchive (2.1.4)
+  - yoga (0.58.5.React)
 
 DEPENDENCIES:
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
+  - CodePush (from `../node_modules/react-native-code-push`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - Firebase/Auth (~> 5.9.0)
   - Firebase/Core (~> 5.9.0)
   - Firebase/Firestore (~> 5.9.0)
+  - Firebase/Functions (~> 5.9.0)
   - Firebase/Messaging (~> 5.9.0)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - GoogleAppMeasurement (~> 5.2.0)
+  - react-native-fast-image (from `../node_modules/react-native-fast-image`)
   - React/Core (from `../node_modules/react-native`)
   - React/CxxBridge (from `../node_modules/react-native`)
   - React/DevSupport (from `../node_modules/react-native`)
   - React/RCTAnimation (from `../node_modules/react-native`)
+  - React/RCTImage (from `../node_modules/react-native`)
   - React/RCTNetwork (from `../node_modules/react-native`)
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
@@ -192,16 +254,19 @@ DEPENDENCIES:
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - Base64
     - boost-for-react-native
-    - BoringSSL
+    - BoringSSL-GRPC
     - Firebase
     - FirebaseAnalytics
     - FirebaseAuth
     - FirebaseAuthInterop
     - FirebaseCore
     - FirebaseFirestore
+    - FirebaseFunctions
     - FirebaseInstanceID
     - FirebaseMessaging
+    - FLAnimatedImage
     - GoogleAppMeasurement
     - GoogleUtilities
     - gRPC
@@ -210,13 +275,19 @@ SPEC REPOS:
     - gRPC-ProtoRPC
     - gRPC-RxLibrary
     - GTMSessionFetcher
+    - JWT
     - leveldb-library
+    - libwebp
     - nanopb
     - Protobuf
+    - SDWebImage
+    - SSZipArchive
 
 EXTERNAL SOURCES:
   BVLinearGradient:
     :path: "../node_modules/react-native-linear-gradient"
+  CodePush:
+    :path: "../node_modules/react-native-code-push"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   Folly:
@@ -225,15 +296,19 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
   React:
     :path: "../node_modules/react-native"
+  react-native-fast-image:
+    :path: "../node_modules/react-native-fast-image"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
+  Base64: cecfb41a004124895a7bcee567a89bae5a89d49b
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  BoringSSL: e10f92a27043805c01071fe815a5cd98ae8212e7
-  BVLinearGradient: e236616ba0f39c52a9d38d2349385ca2b8cfab0b
+  BoringSSL-GRPC: db8764df3204ccea016e1c8dd15d9a9ad63ff318
+  BVLinearGradient: 8cbc5155c978f2e43098818c91d206d07aae6d30
+  CodePush: 300e90b3481fa82569090406165b83745de3613a
   DoubleConversion: bb338842f62ab1d708ceb63ec3d999f0f3d98ecd
   Firebase: 383fa29aca93e371cab776b48a5c66544d3c2003
   FirebaseAnalytics: 831f1f127f4a75698e9875a87bf7e2668730d953
@@ -241,25 +316,32 @@ SPEC CHECKSUMS:
   FirebaseAuthInterop: 0ffa57668be100582bb7643d4fcb7615496c41fc
   FirebaseCore: 2a84b6b325792a4319ef71ee18819dcba08d2fd7
   FirebaseFirestore: eaf0b6244e9463e2429fe216666b641e4dec606b
+  FirebaseFunctions: 6c03d7c5d62520be4678dc3fb7957654aab82b4f
   FirebaseInstanceID: e2fa4cb35ef5558c200f7f0ad8a53e212215f93e
   FirebaseMessaging: d6feeb06218d2675b4149b0ada925a6b707a74cf
-  Folly: c89ac2d5c6ab169cd7397ef27485c44f35f742c7
-  glog: e8acf0ebbf99759d3ff18c86c292a5898282dcde
+  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
+  Folly: de497beb10f102453a1afa9edbf8cf8a251890de
+  glog: aefd1eb5dda2ab95ba0938556f34b98e2da3a60d
   GoogleAppMeasurement: 2b3a023a61239c8d002e6e4fcf4abce8eddce0e0
-  GoogleUtilities: abb092d2c12e817fa3e0e7b274987dd72fb86ec3
-  gRPC: 9d4c549f37c7cef22478634bac7a0405b6e3dbfb
-  "gRPC-C++": ee0b01db3122f0b6c2be28b5b11039f62fa15fe6
-  gRPC-Core: f4836515817c0eb479aeeb9cc27c91c4ba62a9f6
-  gRPC-ProtoRPC: 76f6053639a842e1fb45fa82aa598bf3f4d9f66f
-  gRPC-RxLibrary: 3c305f32155024b116b780f389323c73a28197e6
-  GTMSessionFetcher: 0c4baf0a73acd0041bf9f71ea018deedab5ea84e
+  GoogleUtilities: 6481e6318c5fcabaaa8513ef8120f329055d7c10
+  gRPC: 77d2866b3ce1e187b2239d8adba48b98d9524c15
+  "gRPC-C++": 98be881723177d8c4faf5fdffacb582c7b4971a2
+  gRPC-Core: bd9472c8daa2e414b9f8038ba667bf56ce0e02b8
+  gRPC-ProtoRPC: cc498c1885e75a1fb6b892881b440707f131fb5e
+  gRPC-RxLibrary: 562e2a6d12137d15dfb93bbf652bd3f638e3eb8a
+  GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
+  JWT: 05028b9624591bba9681bb57df2c5f95fa258bad
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
+  libwebp: b068a3bd7c45f7460f6715be7bed1a18fd5d6b48
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
-  Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
-  React: a197ec4fee34abff321271f5614cabc517faed71
-  RNVectorIcons: a58392f365a38ffd3a070bf7449c0145bd0814e1
-  yoga: c991dffbcb89c7eee1aadf243b72e48d462ee34a
+  Protobuf: 7a877b7f3e5964e3fce995e2eb323dbc6831bb5a
+  React: 6cd5e6fcc3b6a52d2fb27a638f622139da710dff
+  react-native-fast-image: 21d2d84a46b12cacbe7958ab6414fe828c094f82
+  RNVectorIcons: 6607bd3a30291d0edb56f9bbe7ae411ee2b928b0
+  SDWebImage: 3f3f0c02f09798048c47a5ed0a13f17b063572d8
+  SSZipArchive: 41455d4b8d2b6ab93990820b50dc697c2554a322
+  yoga: 0e0009ffb2544aeead64a1209f3d488d3849947b
 
-PODFILE CHECKSUM: 9e90700d9db6ec75933dd45f2d2e9b28b4336213
+PODFILE CHECKSUM: 20b24b3f5f0708934e652a0b23fb65afd7e9de69
 
 COCOAPODS: 1.6.0.beta.2

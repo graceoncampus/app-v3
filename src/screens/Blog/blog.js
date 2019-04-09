@@ -1,62 +1,80 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, ScrollView, StyleSheet, Dimensions } from 'react-native';
-import { headerStyles } from '../../theme';
-import { View, Caption, Image, Tile } from '@shoutem/ui';
-import { Screen } from '../../components';
-import { Back } from '../../icons';
+import {
+  TouchableOpacity, ScrollView, Dimensions, View
+} from 'react-native';
 import HTMLView from 'react-native-htmlview';
+import FastImage from 'react-native-fast-image';
+import { AllHtmlEntities } from 'html-entities';
+import LinearGradient from 'react-native-linear-gradient';
+
+import { headerStyles } from '../../theme';
+import { Screen, Text } from '../../components';
+import { Back } from '../../icons';
+import { getRelativeTime } from '../../utils';
+
+const { width } = Dimensions.get('window');
+const entities = new AllHtmlEntities();
 
 export default class Blog extends Component {
-    //add the back button to the top
+    // add the back button to the top
     static navigationOptions = ({ navigation }) => ({
-        title: navigation.getParam('title', 'BLOG'),
-        headerLeft: (
-            <TouchableOpacity style={{ padding: 15 }} onPress={() => navigation.goBack()}>
-              <Back />
-            </TouchableOpacity>
-        ),
-        headerRight: (
-          <View />
-        ),
-        ...headerStyles,
+      title: entities.decode(navigation.getParam('title', 'BLOG')),
+      headerLeft: (
+        <TouchableOpacity style={{ paddingLeft: 8 }} onPress={() => navigation.goBack()}>
+          <Back />
+        </TouchableOpacity>
+      ),
+      headerRight: (
+        <View />
+      ),
+      ...headerStyles,
     })
 
     constructor(props) {
       super(props);
+      const { navigation } = props;
       this.state = {
-        data: {},
-      }
-    }
-
-    async componentWillMount() {
-      this.setState({
-        data: this.props.navigation.getParam('blog'),  //get fetched data from blogs.js 
-      })
-    }
-
-    renderNode(node, index, siblings, parent, defaultRenderer) {  //don't render img tag
-      if (node.name == 'img') {
-        return ( null );
-      }
+        data: navigation.getParam('blog'),
+      };
     }
 
     render = () => {
-      const { date, featured_image, content, attachments } = this.state.data;
-      const dateformat = new Date(date);
-      const image = featured_image ? featured_image : Object.values(attachments).length ? Object.values(attachments)[0].URL : null
-      let cont = content.replace(/(\r\n|\n|\r)/gm, '') + '\n';
+      const {
+        data: {
+          date, image, category, content, title
+        }
+      } = this.state;
+      const cont = `${content.replace(/(\r\n|\n|\r)/gm, '')}\n`;
 
       return (
         <Screen>
-          <ScrollView>
-            <Tile style={{ paddingTop: 20, paddingBottom: 0, flex: 0.8, backgroundColor: 'transparent' }} styleName='text-centric'>
-              <View styleName='vertical' style={{ borderBottomWidth: 1, borderBottomColor: '#ecedef' }} >
-                {image ? <Image style={{width: Dimensions.get('window').width - 30, height: (222/375) * Dimensions.get('window').width}} source={{ uri: image }}/>: null}
-                <Caption>{dateformat.toDateString()}</Caption>
-                <HTMLView value={cont} renderNode={this.renderNode}/>
-              </View>
-            </Tile>
+          <ScrollView style={{ flex: 1 }}>
+            {
+              image && (
+                <FastImage
+                  source={{ uri: image }}
+                  style={{
+                    width,
+                    height: (222 / 375) * width
+                  }}
+                />
+              )
+            }
+            <View style={{
+              padding: 15,
+              paddingBottom: 20
+            }}
+            >
+              <Text styleName="bold" style={{ marginVertical: 6 }}>{entities.decode(title)}</Text>
+              <Text styleName="caption" style={{ marginBottom: 10 }}>{category + getRelativeTime(new Date(date))}</Text>
+              <HTMLView paragraphBreak={'\n'} value={cont} renderNode={node => (node.name === 'img' ? null : undefined)} />
+            </View>
           </ScrollView>
+          <LinearGradient
+            style={{ marginTop: -60, width: 1000, height: 60 }}
+            colors={['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 1)']}
+            pointerEvents="none"
+          />
         </Screen>
       );
     }

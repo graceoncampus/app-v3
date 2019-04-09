@@ -1,49 +1,45 @@
-import React from "react";
-import TrackPlayer from "react-native-track-player";
-import { TouchableOpacity, Text, ListView, View } from "react-native";
-import { Spinner } from '@shoutem/ui'
-import firebase from "react-native-firebase";
+import React from 'react';
+import TrackPlayer from 'react-native-track-player';
+import {
+  TouchableOpacity, ActivityIndicator, Text, FlatList, View
+} from 'react-native';
+import firebase from 'react-native-firebase';
 
-import globalStyles, { headerStyles } from "../theme";
-import Player from "../components/Player";
-import { Menu } from "../icons";
-import { Screen } from "../components";
-import store from "../store";
+import globalStyles, { headerStyles } from '../theme';
+import Player from '../components/Player';
+import { Menu } from '../icons';
+import { Screen } from '../components';
+import store from '../store';
+
 export default class Sermons extends React.Component {
-  constructor() {
-    super();
-    this.currentPage = 1;
-    this.pageSize = 25;
-    this.ref = firebase
-      .firestore()
-      .collection("sermons")
-      .orderBy("date", "desc");
-    this.state = {
-          loading: true,
-      ...store.getState(),
-      feed: new ListView.DataSource({
-        rowHasChanged: (r1, r2) =>
-          r1.id !== r2.id || r1.selected !== r2.selected
-      })
-    };
-  }
-
   static navigationOptions = ({ navigation }) => ({
     drawer: () => ({
-      label: "Sermons"
+      label: 'Sermons'
     }),
-    title: "SERMONS",
+    title: 'SERMONS',
     headerLeft: (
-      <TouchableOpacity
-        style={{ padding: 15 }}
-        onPress={() => navigation.openDrawer()}
-      >
+      <TouchableOpacity style={{ padding: 15 }} onPress={() => navigation.openDrawer()}>
         <Menu />
       </TouchableOpacity>
     ),
     headerRight: <View />,
     ...headerStyles
   });
+
+  constructor() {
+    super();
+    this.currentPage = 1;
+    this.pageSize = 25;
+    this.ref = firebase
+      .firestore()
+      .collection('sermons')
+      .orderBy('date', 'desc');
+    this.state = {
+      loading: true,
+      feed: [],
+      ...store.getState()
+    };
+  }
 
   componentDidMount() {
     this.loadPage();
@@ -56,10 +52,9 @@ export default class Sermons extends React.Component {
         TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS
       ]
     });
-    store.subscribe(state => {
+    store.subscribe((state) => {
       this.setState({
-        ...state,
-        hasChanged: true
+        ...state
       });
     });
   }
@@ -68,48 +63,42 @@ export default class Sermons extends React.Component {
     this.ref
       .limit(this.pageSize * this.currentPage)
       .get()
-      .then(querySnapshot => {
+      .then((querySnapshot) => {
         const sermons = [];
-        querySnapshot.forEach(doc => {
+        querySnapshot.forEach((doc) => {
           const {
-            URI: url,
-            title,
-            speaker: artist,
-            passage,
-            date
+            URI: url, title, speaker: artist, passage, date
           } = doc.data();
           sermons.push({
+            key: doc.id,
             id: doc.id,
             url,
             title,
             artist,
             passage,
             date,
-            artwork:
-              "https://res.cloudinary.com/goc/image/upload/v1552010238/icon_eryqac.png"
+            artwork: 'https://res.cloudinary.com/goc/image/upload/v1552010238/icon_eryqac.png'
           });
         });
         this.currentPage += 1;
-        TrackPlayer.add(sermons).then(() =>
-          this.setState({
-            loading: false,
-            feed: this.state.feed.cloneWithRows(sermons)
-          })
-        );
+        TrackPlayer.add(sermons).then(() => this.setState({
+          loading: false,
+          feed: sermons
+        }));
       });
   };
 
   togglePlayback = async () => {
-    const currentTrack = await TrackPlayer.getCurrentTrack();
-    if (store.getState().playbackState === "playing") {
+    const { playbackState } = store.getState();
+    if (playbackState === 'playing' || playbackState === 3) {
       TrackPlayer.pause();
     } else {
       TrackPlayer.play();
     }
   };
 
-  play = id => {
-    TrackPlayer.skip(id);
+  play = async (id) => {
+    await TrackPlayer.skip(id);
     TrackPlayer.play();
   };
 
@@ -126,37 +115,30 @@ export default class Sermons extends React.Component {
     try {
       await TrackPlayer.skipToPrevious();
       TrackPlayer.play();
-    } catch (_) {}
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  renderRow = row => {
-    const date = new Date(row.date.toString());
+  renderSermon = (row) => {
+    const sermon = row.item;
+    const date = new Date(sermon.date.toString());
     return (
-      <TouchableOpacity onPress={() => this.play(row.id)}>
-        <View
-          style={[
-            { paddingBottom: 15 },
-            globalStyles.borderBottom,
-            globalStyles.row
-          ]}
-        >
+      <TouchableOpacity onPress={() => this.play(sermon.id)}>
+        <View style={[{ paddingBottom: 15 }, globalStyles.borderBottom, globalStyles.row]}>
           <View style={[globalStyles.vertical]}>
-            <React.Fragment>
-              <View style={[globalStyles.horizontal, globalStyles.hvCenter]}>
-                <View style={globalStyles.vertical}>
-                  <Text style={[globalStyles.small, globalStyles.bold]}>
-                    {row.title}
+            <View style={[globalStyles.horizontal, globalStyles.hvCenter]}>
+              <View style={globalStyles.vertical}>
+                <Text style={[globalStyles.small, globalStyles.bold]}>{sermon.title}</Text>
+                {sermon.date && (
+                  <Text style={[globalStyles.caption, { marginTop: -2 }]}>
+                    {`${date.getMonth()}/${date.getDate()}/${date.getFullYear()} | ${
+                      sermon.passage
+                    } | ${sermon.artist}`}
                   </Text>
-                  {row.date && (
-                    <Text style={[globalStyles.caption, { marginTop: -2 }]}>
-                      {`${date.getMonth()}/${date.getDate()}/${date.getFullYear()} | ${
-                        row.passage
-                      } | ${row.artist}`}
-                    </Text>
-                  )}
-                </View>
+                )}
               </View>
-            </React.Fragment>
+            </View>
           </View>
         </View>
       </TouchableOpacity>
@@ -164,27 +146,22 @@ export default class Sermons extends React.Component {
   };
 
   render() {
-    if (!this.state.loading) {
+    const { navigation } = this.props;
+    const { loading, feed } = this.state;
+    if (!loading) {
       return (
         <Screen>
-          <ListView
-            dataSource={this.state.feed}
-            renderRow={row => this.renderRow(row)}
-            onEndReached={() => this.loadPage()}
-          />
-          <Player
-            navigation={this.props.navigation}
-            onTogglePlayback={() => this.togglePlayback()}
-          />
+          <FlatList data={feed} renderItem={this.renderSermon} onEndReached={this.loadPage} />
+          <Player navigation={navigation} onTogglePlayback={this.togglePlayback} />
         </Screen>
       );
     }
     return (
       <Screen>
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Spinner size="large" />
-          </View>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <ActivityIndicator />
+        </View>
       </Screen>
-  );
+    );
   }
 }

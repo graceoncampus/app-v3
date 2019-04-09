@@ -1,5 +1,7 @@
 import React, { PureComponent } from 'react';
-import { SafeAreaView, StyleSheet, StatusBar } from 'react-native';
+import {
+  View, SafeAreaView, StyleSheet, StatusBar
+} from 'react-native';
 
 const styles = StyleSheet.create({
   screen: {
@@ -10,14 +12,23 @@ const styles = StyleSheet.create({
 
 export default class Button extends PureComponent {
   render() {
-    return (
-      <SafeAreaView style={[styles.screen, this.props.style]}>
+    const { style, children, safeViewDisabled } = this.props;
+    return !safeViewDisabled ? (
+      <SafeAreaView style={[styles.screen, style]}>
         <StatusBar
           barStyle="dark-content"
           backgroundColor="#fff"
         />
-        { this.props.children }
+        { children }
       </SafeAreaView>
+    ) : (
+      <View style={[styles.screen, style]}>
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor="#fff"
+        />
+        { children }
+      </View>
     );
   }
 }

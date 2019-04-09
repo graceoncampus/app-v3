@@ -1,26 +1,29 @@
 import React, { Component } from 'react';
-import { TextInput, AsyncStorage, TouchableOpacity, View } from 'react-native';
+import {
+  TextInput, AsyncStorage, TouchableOpacity, View, ActivityIndicator
+} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import firebase from 'react-native-firebase';
-import { Spinner } from '@shoutem/ui';
-import { Text, Button, Divider, Screen } from '../components';
+import {
+  Text, Button, Divider, Screen
+} from '../components';
 import globalStyles, { variables } from '../theme';
 import { Logo } from '../icons';
 
 export default class Login extends Component {
-  static navigationOptions = ({ navigation }) => ({
+  static navigationOptions = () => ({
     header: null
-  })
+  });
 
   state = {
     email: '',
     password: '',
     submitted: false,
-    loading: false,
+    loading: false
   };
 
   onButtonPress = () => {
-    AsyncStorage.setItem('sign_up', "false")
+    AsyncStorage.setItem('sign_up', 'false');
     const { email, password } = this.state;
     this.setState({ submitted: true });
     if (email !== '' && password !== '') {
@@ -32,118 +35,141 @@ export default class Login extends Component {
     } else {
       this.setState({ loading: false });
     }
-  }
+  };
 
   onChangeemail = (email) => {
     this.setState({ submitted: false });
     this.setState({ email });
-  }
+  };
 
   onChangepassword = (password) => {
     this.setState({ submitted: false });
     this.setState({ password });
-  }
+  };
 
   renderButton = () => {
-    if (this.state.loading && this.props.loading !== false) {
+    const { loading } = this.state;
+    const { loading: propsLoading } = this.props;
+    if (propsLoading && loading !== false) {
       return (
         <Button style={{ marginVertical: 10, paddingVertical: 15 }}>
-          <Spinner style={{ color: '#fff' }}/>
+          <ActivityIndicator style={{ color: '#fff' }} />
         </Button>
       );
     }
 
     return (
       <Button style={{ marginVertical: 10 }} onPress={this.onButtonPress}>
-        <Text style={globalStyles.buttonText} >LOG IN</Text>
+        <Text style={globalStyles.buttonText}>LOG IN</Text>
       </Button>
     );
-  }
+  };
 
   render() {
     let error = ' ';
+    const { navigation } = this.props;
     const {
-      focus, email, password, submitted,
+      focus, email, password, submitted, error: err
     } = this.state;
     if (submitted) {
-      if (email === '') { error = 'Please enter your email'; }
+      if (email === '') {
+        error = 'Please enter your email';
+      }
       if (password === '') {
-        if (error !== ' ') { error += ' and password'; } else error = 'Please enter your password';
+        if (error !== ' ') {
+          error += ' and password';
+        } else error = 'Please enter your password';
       }
     }
-    if (this.state.error) {
-      if (this.state.error.includes('password is invalid')) error = 'Looks like that password is invalid';
-      else if (this.state.error.includes('no user record')) error = "That account doesn't exist, sign up below to create one now.";
-      else error = this.state.error;
+    if (err) {
+      if (err.includes('password is invalid')) error = 'Looks like that password is invalid';
+      else if (err.includes('no user record')) error = "That account doesn't exist, sign up below to create one now.";
+      else error = err;
     }
     return (
       <Screen>
         <KeyboardAwareScrollView>
           <View style={globalStyles.tile}>
-            <Logo style={{ marginTop: 50, marginBottom: 10 }} width={150} height={57.75} color={variables.primary} />
+            <Logo
+              style={{ marginTop: 50, marginBottom: 10 }}
+              width={150}
+              height={57.75}
+              color={variables.primary}
+            />
             <Text style={globalStyles.title}>GRACE ON CAMPUS</Text>
-            <Text style={[
-              globalStyles.subtitle,
-              globalStyles.textCenter,
-              globalStyles.textRed,
-              { paddingVertical: 10 },
-            ]}>
+            <Text
+              style={[
+                globalStyles.subtitle,
+                globalStyles.textCenter,
+                globalStyles.textRed,
+                { paddingVertical: 10 }
+              ]}
+            >
               {error}
             </Text>
           </View>
           <View style={{ paddingHorizontal: 25, flex: 0.56 }}>
             <Text style={globalStyles.label}>Email</Text>
             <TextInput
-              underlineColorAndroid='transparent'
+              underlineColorAndroid="transparent"
               style={[globalStyles.input, focus === 'one' && globalStyles.focused]}
               onFocus={() => this.setState({ focus: 'one' })}
               onSubmitEditing={() => this.setState({ focus: '' })}
-              autoCapitalize='none'
+              autoCapitalize="none"
               autoCorrect={false}
-              placeholder='Email'
-              keyboardType='email-address'
+              placeholder="Email"
+              keyboardType="email-address"
               value={email}
               onChangeText={this.onChangeemail}
-              returnKeyType='next'
+              returnKeyType="next"
             />
             <Text style={globalStyles.label}>Password</Text>
             <TextInput
-              underlineColorAndroid='transparent'
+              underlineColorAndroid="transparent"
               style={[globalStyles.input, focus === 'two' && globalStyles.focused]}
               onFocus={() => this.setState({ focus: 'two' })}
-              onSubmitEditing={
-                () => {
-                  this.onButtonPress();
-                  this.setState({ focus: '' });
-                }
-              }
-              placeholder='Password'
+              onSubmitEditing={() => {
+                this.onButtonPress();
+                this.setState({ focus: '' });
+              }}
+              placeholder="Password"
               value={password}
               secureTextEntry
               onChangeText={this.onChangepassword}
-              returnKeyType='done'
+              returnKeyType="done"
             />
             {this.renderButton()}
-            <TouchableOpacity style={{ paddingBottom: 10 }} onPress={() => this.props.navigation.navigate('forgotPassword')}>
+            <TouchableOpacity
+              style={{ paddingBottom: 10 }}
+              onPress={() => navigation.navigate('forgotPassword')}
+            >
               <View>
-                <Text style={[
-                  globalStyles.caption,
-                  globalStyles.textCenter,
-                  globalStyles.textSecondary,
-                ]}>
+                <Text
+                  style={[
+                    globalStyles.caption,
+                    globalStyles.textCenter,
+                    globalStyles.textSecondary
+                  ]}
+                >
                   Forgot password?
                 </Text>
               </View>
             </TouchableOpacity>
             <Divider type="line" />
           </View>
-          <View style={[
-            globalStyles.vertical,
-            globalStyles.vhCenter,
-            globalStyles.vvEnd,
-            { paddingHorizontal: 25, flex: 0.14 },
-          ]}>
-            <Button clear style={{ marginBottom: 10 }} onPress={() => this.props.navigation.navigate('signUp')}>
+          <View
+            style={[
+              globalStyles.vertical,
+              globalStyles.vhCenter,
+              globalStyles.vvEnd,
+              { paddingHorizontal: 25, flex: 0.14 }
+            ]}
+          >
+            <Button
+              clear
+              style={{ marginBottom: 10 }}
+              onPress={() => navigation.navigate('signUp')}
+            >
               <Text style={globalStyles.buttonTextGold}>SIGN UP</Text>
             </Button>
             <Divider />

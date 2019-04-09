@@ -1,5 +1,6 @@
 import firebase from 'react-native-firebase';
 import { AsyncStorage } from 'react-native';
+
 const times = [
   60000, // minute
   3600000, // hour
@@ -15,14 +16,15 @@ past.f = 'just now';
 
 const singleValue = time => (time === 'hour' ? 'an' : 'a');
 
-var thisUserData = {};
+let thisUserData = {};
+export const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 export const getRelativeTime = (time) => {
   const now = new Date();
   const diff = now.getTime() - time.getTime();
-  let i = 0,
-    units,
-    value;
+  let i = 0;
+  let units;
+  let value;
   const iMax = times.length;
   for (; i < iMax; i += 1) {
     value = times[i];
@@ -83,13 +85,13 @@ export const saveToken = (token) => {
   const user = firebase.auth().currentUser;
   if (user && user._user) {
     const { _user: { uid } } = user;
-    const userRef = firebase.firestore().collection('users').doc(uid)
+    const userRef = firebase.firestore().collection('users').doc(uid);
     userRef
       .get()
       .then((snapshot) => {
         if (snapshot.exists) {
-          const user = snapshot.data();
-          const currentTokens = user.tokens || { };
+          const userData = snapshot.data();
+          const currentTokens = userData.tokens || { };
           if (!currentTokens[token]) {
             const tokens = { ...currentTokens, [token]: true };
             userRef.update({ tokens });
@@ -105,20 +107,21 @@ export const signOut = async () => {
     const user = firebase.auth().currentUser;
     if (user && user._user) {
       const { _user: { uid } } = user;
-      const userRef = firebase.firestore().collection('users').doc(uid)
+      const userRef = firebase.firestore().collection('users').doc(uid);
       const snapshot = await userRef.get();
       if (snapshot.exists) {
-        const user = snapshot.data();
-        const currentTokens = user.tokens || { };
+        const userData = snapshot.data();
+        const currentTokens = userData.tokens || { };
         if (currentTokens[token]) {
           const tokens = { ...currentTokens };
-          delete tokens[token]
+          delete tokens[token];
           await userRef.update({ tokens });
           await AsyncStorage.removeItem('token');
         }
       }
     }
   }
+  firebase.notifications().setBadge(0);
   firebase.auth().signOut();
 };
 
@@ -128,12 +131,10 @@ export const clamp = (value, min, max) => (min < max
 
 export const setCurrentUserData = (data) => {
   thisUserData = data;
-}
+};
 
 export const updateCurrentUserData = (data) => {
   thisUserData = Object.assign(thisUserData, data);
-}
+};
 
-export const getCurrentUserData = () => {
-  return thisUserData;
-}
+export const getCurrentUserData = () => thisUserData;

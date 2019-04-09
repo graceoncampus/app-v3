@@ -11,7 +11,8 @@ target 'GOC' do
     'RCTText',
     'RCTNetwork',
     'RCTWebSocket', # Needed for debugging
-    'RCTAnimation', # Needed for FlatList and animations running on native UI thread
+    'RCTAnimation',
+    'RCTImage' # Needed for FlatList and animations running on native UI thread
     # Add any other subspecs you want to use in your project
   ]
   # Explicitly include Yoga if you are using RN >= 0.42.0
@@ -21,15 +22,23 @@ target 'GOC' do
   pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
-  
+  pod 'CodePush', :path => '../node_modules/react-native-code-push'
+
   pod 'GoogleAppMeasurement', '~> 5.2.0'
   pod 'Firebase/Core', '~> 5.9.0'
   pod 'Firebase/Auth', '~> 5.9.0'
   pod 'Firebase/Firestore', '~> 5.9.0'
   pod 'Firebase/Messaging', '~> 5.9.0'
-
+  pod 'Firebase/Functions', '~> 5.9.0'
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
-
+  pod 'react-native-fast-image', :path => '../node_modules/react-native-fast-image'
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
-
 end
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    if target.name == "React"
+      target.remove_from_project
+    end
+  end
+end
+

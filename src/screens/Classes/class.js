@@ -1,20 +1,21 @@
-import React, { Component, Fragment } from "react";
-import { TouchableOpacity, Alert } from "react-native";
-import { Title, View, Text, ScrollView } from "@shoutem/ui";
-import { Button, Divider, Screen, Text as CustomText } from "../../components";
-import firebase from "react-native-firebase";
-import globalStyles, { headerStyles } from "../../theme";
-import { Back } from "../../icons";
-import { getCurrentUserData } from "../../utils";
+import React, { Component, Fragment } from 'react';
+import {
+  TouchableOpacity, Alert, ScrollView, View
+} from 'react-native';
+import firebase from 'react-native-firebase';
 import LinearGradient from 'react-native-linear-gradient';
+import {
+  Button, Divider, Screen, Text
+} from '../../components';
+import globalStyles, { headerStyles } from '../../theme';
+import { Back } from '../../icons';
+import { getCurrentUserData, months } from '../../utils';
+
 export default class classDetails extends Component {
   static navigationOptions = ({ navigation }) => ({
-    title: "CLASS",
+    title: 'CLASS',
     headerLeft: (
-      <TouchableOpacity
-        style={{ padding: 15 }}
-        onPress={() => navigation.goBack()}
-      >
+      <TouchableOpacity style={{ paddingLeft: 8 }} onPress={() => navigation.goBack()}>
         <Back />
       </TouchableOpacity>
     ),
@@ -25,35 +26,22 @@ export default class classDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: {},
-      thisUserData: {}
+      data: props.navigation.getParam('data'),
+      thisUserData: getCurrentUserData()
     };
-    this.enroll = this.enroll.bind(this);
-    this.unenroll = this.unenroll.bind(this);
   }
 
-  componentWillMount() {
-    thisUserData = getCurrentUserData();
-    this.setState({
-      data: this.props.navigation.getParam("data"),
-      thisUserData
-    });
-  }
-
-  enroll() {
-    var newData = this.state.data;
+  enroll = () => {
+    const { data: newData, thisUserData } = this.state;
     const currentUid = firebase.auth().currentUser.uid;
-    const currentName =
-      this.state.thisUserData.firstName +
-      " " +
-      this.state.thisUserData.lastName;
+    const currentName = `${thisUserData.firstName} ${thisUserData.lastName}`;
     const toAdd = { UID: currentUid, name: currentName };
     newData.students.push(toAdd);
-    newData.openSpots = newData.openSpots - 1;
+    newData.openSpots -= 1;
     newData.isEnrolled = true;
     firebase
       .firestore()
-      .collection("classes")
+      .collection('classes')
       .doc(`${newData.key}`)
       .update({
         students: newData.students,
@@ -62,19 +50,17 @@ export default class classDetails extends Component {
     this.setState({
       data: newData
     });
-  }
+  };
 
-  unenroll() {
-    var newData = this.state.data;
+  unenroll = () => {
+    const { data: newData } = this.state;
     const currentUid = firebase.auth().currentUser.uid;
-    newData.students = newData.students.filter(function(e) {
-      return e.UID != currentUid;
-    });
-    newData.openSpots = newData.openSpots + 1;
+    newData.students = newData.students.filter(e => e.UID !== currentUid);
+    newData.openSpots += 1;
     newData.isEnrolled = false;
     firebase
       .firestore()
-      .collection("classes")
+      .collection('classes')
       .doc(`${newData.key}`)
       .update({
         students: newData.students,
@@ -83,15 +69,17 @@ export default class classDetails extends Component {
     this.setState({
       data: newData
     });
-  }
+  };
 
   renderButton() {
-    const { openSpots, isEnrolled } = this.state.data;
-    if (openSpots == 0 && !isEnrolled) {
+    const {
+      data: { openSpots, isEnrolled }
+    } = this.state;
+    if (openSpots === 0 && !isEnrolled) {
       return (
         <Button
-          style={{ marginBottom: 15, backgroundColor: "red" }}
-          onPress={() => Alert.alert("", "Sorry, class is still full")}
+          style={{ marginBottom: 15, backgroundColor: 'red' }}
+          onPress={() => Alert.alert('', 'Sorry, class is still full')}
         >
           <Text>CLASS FULL</Text>
         </Button>
@@ -100,7 +88,7 @@ export default class classDetails extends Component {
     if (isEnrolled) {
       return (
         <Button
-          style={{ marginBottom: 15, backgroundColor: "red" }}
+          style={{ marginBottom: 15, backgroundColor: 'red' }}
           onPress={() => this.unenroll()}
         >
           <Text style={globalStyles.buttonText}>UNENROLL</Text>
@@ -108,17 +96,17 @@ export default class classDetails extends Component {
       );
     }
     return (
-      <Button
-        style={{ marginBottom: 15, backgroundColor: "green" }}
-        onPress={() => this.enroll()}
-      >
+      <Button style={{ marginBottom: 15, backgroundColor: 'green' }} onPress={() => this.enroll()}>
         <Text style={globalStyles.buttonText}>ENROLL</Text>
       </Button>
     );
   }
 
   render = () => {
-    const classData = this.state.data;
+    const {
+      thisUserData,
+      data,
+    } = this.state;
     const {
       classTime,
       day,
@@ -130,71 +118,49 @@ export default class classDetails extends Component {
       startDate,
       title,
       totalSpots,
-      isEnrolled
-    } = this.state.data;
-    var months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December"
-    ];
+    } = data;
+    const { navigation } = this.props;
     const startMonth = months[startDate.getMonth()];
     const startDay = startDate.getDate();
     const endMonth = months[endDate.getMonth()];
     const endDay = endDate.getDate();
-    var permissions = this.state.thisUserData.permissions;
-
     return (
-      <Screen style={{ flexDirection: "column" }}>
+      <Screen style={{ flexDirection: 'column' }}>
         <View
           style={{
             borderBottomWidth: 1,
-            borderBottomColor: "#ecedef",
+            borderBottomColor: '#ecedef',
             paddingHorizontal: 35
           }}
         >
           <Divider />
-          <Title>{title}</Title>
+          <Text>{title}</Text>
           <Divider height={10} />
           {instructor && (
-            <CustomText>
-              <CustomText styleName="caption bold">Instructor: </CustomText>
-              <CustomText styleName="caption">{instructor}</CustomText>
-            </CustomText>
+            <Text>
+              <Text styleName="caption bold">Instructor: </Text>
+              <Text styleName="caption">{instructor}</Text>
+            </Text>
           )}
           {location && (
-            <CustomText>
-              <CustomText styleName="caption bold">Location: </CustomText>
-              <CustomText styleName="caption">{location}</CustomText>
-            </CustomText>
+            <Text>
+              <Text styleName="caption bold">Location: </Text>
+              <Text styleName="caption">{location}</Text>
+            </Text>
           )}
-          <CustomText>
-            <CustomText styleName="caption bold">Dates: </CustomText>
-            <CustomText styleName="caption">
-              {startMonth} {startDay} - {endMonth} {endDay}
-            </CustomText>
-          </CustomText>
-          <CustomText>
-            <CustomText styleName="caption bold">Time: </CustomText>
-            <CustomText styleName="caption">
-              {day}, {classTime}
-            </CustomText>
-          </CustomText>
+          <Text>
+            <Text styleName="caption bold">Dates: </Text>
+            <Text styleName="caption">{`${startMonth} ${startDay} - ${endMonth} ${endDay}`}</Text>
+          </Text>
+          <Text>
+            <Text styleName="caption bold">Time: </Text>
+            <Text styleName="caption">{`${day}, ${classTime}`}</Text>
+          </Text>
           {totalSpots && (
-            <CustomText>
-              <CustomText styleName="caption bold">Spots Left: </CustomText>
-              <CustomText styleName="caption">
-                {openSpots}/{totalSpots}
-              </CustomText>
-            </CustomText>
+            <Text>
+              <Text styleName="caption bold">Spots Left: </Text>
+              <Text styleName="caption">{`${openSpots}/${totalSpots}`}</Text>
+            </Text>
           )}
           <Divider height={20} />
         </View>
@@ -203,43 +169,46 @@ export default class classDetails extends Component {
             <View
               style={{
                 flex: 1,
-                backgroundColor: "white",
+                backgroundColor: 'white',
                 paddingVertical: 25,
                 paddingHorizontal: 35
               }}
             >
-              <CustomText styleName="paragraph">{details}</CustomText>
+              <Text styleName="paragraph">{details}</Text>
             </View>
           )}
         </ScrollView>
         <LinearGradient
-          style={{marginTop: -30, width: 1000, height:30}}
+          style={{ marginTop: -30, width: 1000, height: 30 }}
           colors={['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 1)']}
-          pointerEvents={'none'}
+          pointerEvents="none"
         />
         <View
-          style={{ height: permissions != null && permissions.classes === 1 ? 130 : 65, marginTop: 15, paddingHorizontal: 25 }}
+          style={{
+            height:
+              thisUserData && thisUserData.permissions && thisUserData.permissions.classes === 1
+                ? 130
+                : 65,
+            marginTop: 15,
+            paddingHorizontal: 25
+          }}
           styleName="vertical h-center v-end v-center"
         >
-          {permissions != null && permissions.classes === 1 && (
-            <Button clear
+          {thisUserData && thisUserData.permissions && thisUserData.permissions.classes === 1 && (
+            <Button
+              clear
               style={{ marginBottom: 15 }}
               onPress={() => {
-                this.props.navigation.navigate("ClassEnrollment", {
-                  classData
+                navigation.navigate('ClassEnrollment', {
+                  students: data.students,
+                  title
                 });
               }}
             >
-              <CustomText style={globalStyles.buttonTextGold}>
-                VIEW ENROLLMENT
-              </CustomText>
+              <Text style={globalStyles.buttonTextGold}>VIEW ENROLLMENT</Text>
             </Button>
           )}
-          {firebase.auth().currentUser && (
-            <Fragment>
-              {this.renderButton()}
-            </Fragment>
-          )}
+          {firebase.auth().currentUser && <Fragment>{this.renderButton()}</Fragment>}
         </View>
       </Screen>
     );

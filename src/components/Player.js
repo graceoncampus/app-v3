@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { ProgressComponent } from 'react-native-track-player';
-import { StyleSheet, Text, Image, TouchableOpacity, View } from 'react-native';
+import {
+  StyleSheet, Text, Image, TouchableOpacity, View
+} from 'react-native';
 import store from '../store';
 import { Play, Pause } from '../icons';
 import globalStyles, { variables } from '../theme';
@@ -47,45 +49,55 @@ export default class Player extends Component {
   }
 
   navigate = () => {
-    this.props.navigation.navigate('SingleSermon')
+    const { navigation } = this.props;
+    navigation.navigate('SingleSermon');
   }
+
   render() {
     const {
       onTogglePlayback,
     } = this.props;
+    const {
+      artwork, title, artist, playbackState
+    } = this.state;
     return (
       <React.Fragment>
         <View style={[globalStyles.vertical, styles.card]}>
           <ProgressBar />
-          <TouchableOpacity style={[globalStyles.row, globalStyles.stretch]} onPress={this.navigate}>
-              <Image style={{ width: 40, height: 40, borderRadius: 2 }} source={{ uri: this.state.artwork }} />
-              <View style={[
-                {
-                  marginLeft: 10,
-                  paddingRight: 10,
-                  flex: 0.98,
-                },
-                globalStyles.vertical,
-              ]}
+          <TouchableOpacity
+            style={[globalStyles.row, globalStyles.stretch]}
+            onPress={this.navigate}
+          >
+            <Image style={{ width: 40, height: 40, borderRadius: 2 }} source={{ uri: artwork }} />
+            <View style={[
+              {
+                marginLeft: 10,
+                paddingRight: 10,
+                flex: 0.98,
+              },
+              globalStyles.vertical,
+            ]}
+            >
+              <Text numberOfLines={1} style={{ fontWeight: 'bold', marginBottom: 3 }}>
+                {title}
+              </Text>
+              <Text
+                style={[
+                  { marginBottom: -2 },
+                  globalStyles.small
+                ]}
               >
-                <Text style={{ fontWeight: 'bold', marginBottom: 3 }}>
-                  {this.state.title}
-                </Text>
-                <Text
-                  style={[
-                    { marginBottom: -2},
-                    globalStyles.small
-                  ]}
-                >{this.state.artist}</Text>
-              </View>
-              <View style={[globalStyles.horizontal, globalStyles.hhEnd]}>
-                <TouchableOpacity onPress={onTogglePlayback}>
-                  {
-                    this.state.playbackState === 'playing' ? <Pause />
-                    : <Play/>
+                {artist}
+              </Text>
+            </View>
+            <View style={[globalStyles.horizontal, globalStyles.hhEnd]}>
+              <TouchableOpacity onPress={onTogglePlayback}>
+                {
+                    playbackState === 'playing' || playbackState === 3 ? <Pause dark width={40} />
+                      : <Play dark width={40} />
                   }
-                </TouchableOpacity>
-              </View>
+              </TouchableOpacity>
+            </View>
           </TouchableOpacity>
         </View>
       </React.Fragment>

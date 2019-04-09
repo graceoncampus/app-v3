@@ -1,16 +1,13 @@
 import React from 'react';
 import {
-  TouchableOpacity,
-  TextInput,
-  View,
-  Alert,
-  Image,
-  Dimensions,
+  TouchableOpacity, TextInput, View, Alert, Image, Dimensions
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import firebase from 'react-native-firebase';
 
-import { Text, Divider, Button, Screen } from '../components';
+import {
+  Text, Divider, Button, Screen
+} from '../components';
 import ProgressBar from '../components/ProgressBar';
 
 import globalStyles, { headerStyles, variables } from '../theme';
@@ -20,31 +17,50 @@ const { width, height } = Dimensions.get('window');
 
 const options = [
   {
-    name: 'A-Team',
-    image_url: 'goc_profile',
+    name: 'Grace on Campus'
   },
   {
-    name: 'Chris Gee',
-    image_url: 'chris',
-  },
+    name: 'Chris Gee'
+  }
 ];
 
 const sendAlert = () => {
-  Alert.alert(
-    'Empty Fields',
-    'Fill in title and post content',
-  );
+  Alert.alert('Empty Fields', 'Fill in title and post content');
 };
 
 export default class EditPost extends React.Component {
+  static navigationOptions = ({ navigation }) => {
+    const preview = navigation.getParam('preview', false);
+    const isEditing = navigation.getParam('isEditing', false);
+    const loading = navigation.getParam('loading', false);
+    const title = loading || (isEditing ? 'EDIT ANNOUNCEMENT' : 'NEW ANNOUNCEMENT');
+    return {
+      title,
+      gesturesEnabled: false,
+      headerLeft: loading ? (
+        <View />
+      ) : (
+        <TouchableOpacity style={{ paddingLeft: 8 }} onPress={() => navigation.goBack()}>
+          <Back />
+        </TouchableOpacity>
+      ),
+      headerRight: preview && !loading && (
+        <TouchableOpacity style={{ marginRight: 15 }} onPress={preview}>
+          <Eye />
+        </TouchableOpacity>
+      ),
+      ...headerStyles
+    };
+  };
+
   constructor(props) {
     super(props);
     const announcement = props.navigation.getParam('announcement', {
       post: '',
       title: '',
-      role: 'A-Team',
+      role: 'Grace on Campus',
       key: undefined,
-      date: new Date().toISOString(),
+      date: new Date().toISOString()
     });
     this.ref = firebase.firestore().collection('announcements');
     this.state = {
@@ -54,13 +70,13 @@ export default class EditPost extends React.Component {
       key: announcement.key,
       loading: false,
       title: announcement.title,
-      selected: announcement.role,
+      selected: announcement.role
     };
   }
 
   componentDidMount() {
     this.props.navigation.setParams({
-      preview: this.preview,
+      preview: this.preview
     });
   }
 
@@ -73,110 +89,81 @@ export default class EditPost extends React.Component {
           post,
           title,
           role,
-          date: new Date().toISOString(),
+          date: new Date().toISOString()
         },
         title,
-        isPreview: true,
+        isPreview: true
       });
     }
-  }
-
-  static navigationOptions = ({ navigation }) => {
-    const preview = navigation.getParam('preview', false);
-    const isEditing = navigation.getParam('isEditing', false);
-    const loading = navigation.getParam('loading', false);
-    const title = loading || (isEditing ? 'EDIT ANNOUNCEMENT' : 'NEW ANNOUNCEMENT');
-    return ({
-      title,
-      gesturesEnabled: false,
-      headerLeft: loading ? <View /> : (
-        <TouchableOpacity style={{ padding: 15 }} onPress={() => navigation.goBack()}>
-          <Back />
-        </TouchableOpacity>
-      ),
-      headerRight: preview && !loading && (
-        <TouchableOpacity
-          style={{ padding: 15 }}
-          onPress={preview}
-        >
-          <Eye />
-        </TouchableOpacity>
-      ),
-      ...headerStyles,
-    });
-  }
+  };
 
   onChangePost = (Post) => {
     this.setState({ submitted: false, Post });
-  }
+  };
 
   onChangeTitle = (title) => {
     this.setState({ submitted: false, title });
-  }
+  };
 
   confirmPost = () => {
-    Alert.alert(
-      'Confirm Post',
-      'Are you sure you want to post?',
-      [
-        { text: 'Confirm', onPress: this.updateInfo },
-        { text: 'Cancel', onPress: () => console.log('OK Pressed!') },
-      ],
-    );
-  }
+    Alert.alert('Confirm Post', 'Are you sure you want to post?', [
+      { text: 'Confirm', onPress: this.updateInfo },
+      { text: 'Cancel', onPress: () => console.log('OK Pressed!') }
+    ]);
+  };
 
   increment = () => {
     if (this.state.progress < 100) {
       setTimeout(() => {
-        this.setState({ progress: this.state.progress + (0.8 * Math.random()) });
+        this.setState({ progress: this.state.progress + 0.8 * Math.random() });
       }, 10);
     }
-  }
+  };
 
   delete = () => {
     this.props.navigation.setParams({
-      loading: 'DELETING...',
+      loading: 'DELETING...'
     });
     this.setState({ loading: true });
-    this.ref.doc(this.state.key).delete().then(() => (
-      this.props.navigation.navigate('Home')
-    ));
-  }
+    this.ref
+      .doc(this.state.key)
+      .delete()
+      .then(() => this.props.navigation.navigate('Home'));
+  };
 
   update = () => {
     this.props.navigation.setParams({
-      loading: 'UPDATING...',
+      loading: 'UPDATING...'
     });
     this.setState({ loading: true });
-    const {
-      Post: post,
-      selected: role,
-      title,
-    } = this.state;
+    const { Post: post, selected: role, title } = this.state;
 
-    this.ref.doc(this.state.key).update({
-      post,
-      role,
-      title,
-    }).then(() => (
-      this.props.navigation.navigate('Home')
-    ));
-  }
+    this.ref
+      .doc(this.state.key)
+      .update({
+        post,
+        role,
+        title
+      })
+      .then(() => this.props.navigation.navigate('Home'));
+  };
 
   publish = () => {
     this.props.navigation.setParams({
-      loading: 'POSTING...',
+      loading: 'POSTING...'
     });
     this.setState({ loading: true });
-    this.ref.add({
-      role: this.state.selected,
-      post: this.state.Post,
-      title: this.state.title,
-      date: new Date(),
-    }).then(() => {
-      this.props.navigation.navigate('Home');
-    });
-  }
+    this.ref
+      .add({
+        role: this.state.selected,
+        post: this.state.Post,
+        title: this.state.title,
+        date: new Date()
+      })
+      .then(() => {
+        this.props.navigation.navigate('Home');
+      });
+  };
 
   renderButton = () => {
     const isEditing = this.props.navigation.getParam('isEditing', false);
@@ -185,19 +172,15 @@ export default class EditPost extends React.Component {
         <Text style={globalStyles.buttonText}>{isEditing ? 'UPDATE' : 'PUBLISH'}</Text>
       </Button>
     );
-  }
+  };
 
   renderDelete = () => (
-      <TouchableOpacity style={{ paddingTop: 10 }} onPress={this.delete}>
-        <Text style={[
-          globalStyles.caption,
-          globalStyles.textCenter,
-          globalStyles.textRed,
-        ]}>
-          DELETE ANNOUNCEMENT
-        </Text>
-      </TouchableOpacity>
-  )
+    <TouchableOpacity style={{ paddingTop: 10 }} onPress={this.delete}>
+      <Text style={[globalStyles.caption, globalStyles.textCenter, globalStyles.textRed]}>
+        DELETE ANNOUNCEMENT
+      </Text>
+    </TouchableOpacity>
+  );
 
   renderOptions = () => {
     let i = 0;
@@ -206,19 +189,18 @@ export default class EditPost extends React.Component {
     for (; i < iMax; i += 1) {
       const { name, image_url } = options[i];
       opts[i] = (
-        <View key={i} style={[
-          i === 0 && globalStyles.borderTop,
-          globalStyles.borderBottom,
-          {
-            paddingVertical: 11.5,
-          },
-        ]}>
+        <View
+          key={i}
+          style={[
+            i === 0 && globalStyles.borderTop,
+            globalStyles.borderBottom,
+            {
+              paddingVertical: 11.5
+            }
+          ]}
+        >
           <TouchableOpacity
-            style={[
-              globalStyles.horizontal,
-              globalStyles.hvCenter,
-              globalStyles.spaceBetween,
-            ]}
+            style={[globalStyles.horizontal, globalStyles.hvCenter, globalStyles.spaceBetween]}
             onPress={() => this.setState({ selected: name })}
           >
             <View style={[globalStyles.horizontal]}>
@@ -227,55 +209,54 @@ export default class EditPost extends React.Component {
                   borderRadius: 12,
                   width: 24,
                   height: 24,
-                  marginRight: 8,
+                  marginRight: 8
                 }}
                 source={{ uri: image_url }}
               />
               <Text style={[globalStyles.bold, globalStyles.small]}>{name}</Text>
             </View>
-            <View style={[
-              globalStyles.vertical,
-              globalStyles.vhCenter,
-              globalStyles.vvCenter,
-              {
-                width: 12,
-                height: 12,
-                borderRadius: 6,
-                backgroundColor: 'transparent',
-                borderColor: variables.primary,
-                borderWidth: 1,
-              },
-            ]}>
-              {
-                this.state.selected === name &&
-                <View style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: 4,
-                  backgroundColor: variables.primary,
-                }} />
-              }
+            <View
+              style={[
+                globalStyles.vertical,
+                globalStyles.vhCenter,
+                globalStyles.vvCenter,
+                {
+                  width: 12,
+                  height: 12,
+                  borderRadius: 6,
+                  backgroundColor: 'transparent',
+                  borderColor: variables.primary,
+                  borderWidth: 1
+                }
+              ]}
+            >
+              {this.state.selected === name && (
+                <View
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: 4,
+                    backgroundColor: variables.primary
+                  }}
+                />
+              )}
             </View>
           </TouchableOpacity>
         </View>
       );
     }
     return opts;
-  }
+  };
 
   render = () => {
     const {
-      Post,
-      focus,
-      title,
-      loading,
+      Post, focus, title, loading
     } = this.state;
     const isEditing = this.props.navigation.getParam('isEditing', false);
     if (this.state.loading) this.increment();
     return (
       <Screen>
-        {
-          loading &&
+        {loading && (
           <React.Fragment>
             <ProgressBar
               fillStyle={{}}
@@ -283,19 +264,21 @@ export default class EditPost extends React.Component {
               progress={this.state.progress}
               style={{ width }}
             />
-            <View style={{
-              flex: 1,
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              opacity: 0.6,
-              backgroundColor: 'black',
-              width,
-              height,
-              zIndex: 10000,
-            }} />
+            <View
+              style={{
+                flex: 1,
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                opacity: 0.6,
+                backgroundColor: 'black',
+                width,
+                height,
+                zIndex: 10000
+              }}
+            />
           </React.Fragment>
-        }
+        )}
         <KeyboardAwareScrollView>
           <View style={{ paddingTop: 20, paddingHorizontal: 25 }}>
             <Text style={globalStyles.label}>Title</Text>
@@ -306,43 +289,39 @@ export default class EditPost extends React.Component {
               placeholder="Title"
               value={title}
               onChangeText={this.onChangeTitle}
-              returnKeyType='next'
-              underlineColorAndroid='transparent'
+              returnKeyType="next"
+              underlineColorAndroid="transparent"
             />
             <Text style={globalStyles.label}>Post</Text>
             <TextInput
-              multiline={true}
-              numberOfLines = {8}
+              multiline
+              numberOfLines={8}
               onFocus={() => this.setState({ focus: 'one' })}
               onSubmitEditing={() => this.setState({ focus: '' })}
               placeholder="Post content ..."
-              underlineColorAndroid='transparent'
-              style={[
-                globalStyles.multiLineInput,
-                focus === 'one' && globalStyles.focused,
-              ]}
+              underlineColorAndroid="transparent"
+              style={[globalStyles.multiLineInput, focus === 'one' && globalStyles.focused]}
               onChange={(event) => {
                 this.setState({
-                  Post: event.nativeEvent.text,
+                  Post: event.nativeEvent.text
                 });
               }}
               value={Post}
             />
             <Text style={[{ marginBottom: 3 }, globalStyles.label]}>Post As</Text>
-            { this.renderOptions() }
+            {this.renderOptions()}
             <Divider />
             <Divider />
-            <View style={[
-              globalStyles.vertical,
-              globalStyles.vhCenter,
-              globalStyles.vvEnd,
-              { flex: 0.25 },
-            ]}>
+            <View
+              style={[
+                globalStyles.vertical,
+                globalStyles.vhCenter,
+                globalStyles.vvEnd,
+                { flex: 0.25 }
+              ]}
+            >
               {this.renderButton()}
-              {
-                isEditing &&
-                this.renderDelete()
-              }
+              {isEditing && this.renderDelete()}
             </View>
           </View>
           <Divider />
@@ -350,5 +329,5 @@ export default class EditPost extends React.Component {
         </KeyboardAwareScrollView>
       </Screen>
     );
-  }
+  };
 }

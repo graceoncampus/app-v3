@@ -239,7 +239,7 @@ export default StyleSheet.create({
     paddingVertical: 9,
     paddingHorizontal: 15,
     marginBottom: 7,
-    borderRadius: 1,
+    borderRadius: 2,
   },
 
   multiLineInput: {
@@ -258,5 +258,6 @@ export default StyleSheet.create({
 
   focused: {
     borderColor: variables.primary,
+    borderWidth: 2
   },
 });

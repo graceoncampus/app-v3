@@ -1,117 +1,171 @@
-import React, { Component } from 'react';
-import { TouchableOpacity } from 'react-native';
-import { Icon, View, Divider, Caption, ListView, Row, Title, Spinner } from '@shoutem/ui';
-import { Screen } from '../../components';
+import React, { Component, Fragment } from 'react';
+import {
+  TouchableOpacity, FlatList, View, ActivityIndicator
+} from 'react-native';
 import firebase from 'react-native-firebase';
-import { headerStyles } from '../../theme';
-import { Menu } from '../../icons';
+import { Screen, Divider, Text } from '../../components';
+import globalStyles, { headerStyles } from '../../theme';
+import { Menu, Check } from '../../icons';
+import { months } from '../../utils';
+
+export const Meta = ({
+  data: {
+    instructor,
+    startMonth,
+    startDay,
+    endMonth,
+    endDay,
+    location,
+    openSpots,
+    totalSpots,
+    day,
+    classTime
+  }
+}) => (
+  <Fragment>
+    {instructor && (
+    <Text>
+      <Text styleName="caption bold">Instructor: </Text>
+      <Text styleName="caption">{instructor}</Text>
+    </Text>
+    )}
+    {location && (
+    <Text>
+      <Text styleName="caption bold">Location: </Text>
+      <Text styleName="caption">{location}</Text>
+    </Text>
+    )}
+    <Text>
+      <Text styleName="caption bold">Dates: </Text>
+      <Text styleName="caption">{`${startMonth} ${startDay} - ${endMonth} ${endDay}`}</Text>
+    </Text>
+    <Text>
+      <Text styleName="caption bold">Time: </Text>
+      <Text styleName="caption">{`${day}, ${classTime}`}</Text>
+    </Text>
+    {totalSpots && (
+    <Text>
+      <Text styleName="caption bold">Spots Left: </Text>
+      <Text styleName="caption">{`${openSpots}/${totalSpots}`}</Text>
+    </Text>
+    )}
+  </Fragment>
+);
 
 export default class Classes extends Component {
-    static navigationOptions = ({ navigation }) => ({
-        drawer: () => ({
-          label: 'Classes',
-        }),
-        title: 'CLASSES',
-        headerLeft: (
-          <TouchableOpacity style={{ padding: 15 }} onPress={() => navigation.openDrawer()}>
-            <Menu />
-          </TouchableOpacity>
-        ),
-        headerRight: (
-          <View />
-        ),
-        ...headerStyles,
-      })
+  static navigationOptions = ({ navigation }) => ({
+    drawer: () => ({
+      label: 'Classes',
+    }),
+    title: 'CLASSES',
+    headerLeft: (
+      <TouchableOpacity style={{ padding: 15 }} onPress={() => navigation.openDrawer()}>
+        <Menu />
+      </TouchableOpacity>
+    ),
+    headerRight: (
+      <View />
+    ),
+    ...headerStyles,
+  })
 
   constructor(props) {
     super(props);
-    this.renderRow = this.renderRow.bind(this);
     this.ref = firebase.firestore().collection('classes').orderBy('startDate', 'desc');
     this.unsubscribe = null;
     this.state = {
-        classes: [],
-        loading: true,
-    }
-  };
+      classes: [],
+      loading: true
+    };
+  }
 
   componentDidMount() {
-      this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
+    this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
   }
 
   componentWillUnmount() {
-      this.unsubscribe();
+    this.unsubscribe();
   }
 
   onCollectionUpdate = (querySnapshot) => {
-    var i = 0;
-    const iMax = querySnapshot.docs.length;
     const currentUid = firebase.auth().currentUser.uid;
-    const classes = new Array(iMax);
-    var isEnrolled = false;
-    for (; i < iMax; i += 1) {
-      const doc = querySnapshot.docs[i];
-      if(doc.data().students !== undefined) { // if students array does not exist for a class then not possible for logged in user to be enrolled in class
-      for (var j = 0; j < doc.data().students.length; j += 1)
-      {
-        if(currentUid == doc.data().students[j].UID) {
-          isEnrolled = true;
-          break;
-        }
+    const classes = [];
+
+    querySnapshot.forEach((cl) => {
+      const data = cl.data();
+      let isEnrolled = false;
+      if (data.students) {
+        const student = data.students.find(std => (std.UID === currentUid));
+        if (student) isEnrolled = true;
       }
-    }
-      classes[i] = {
-        key: doc.id,
+      classes.push({
+        key: cl.id,
         isEnrolled,
-        ...doc.data(),
-      };
-    }
+        ...data
+      });
+    });
+
     this.setState({
       classes,
-      loading: false,
+      loading: false
     });
   }
 
-  renderRow(data) {
-    const { title, openSpots, startDate, endDate, key, instructor, isEnrolled, day, classTime} = data;
-    var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  renderClass = (data) => {
+    const { navigation } = this.props;
+    const {
+      title, openSpots, totalSpots, startDate, endDate, instructor, isEnrolled, day, classTime
+    } = data.item;
     const startMonth = months[startDate.getMonth()];
     const startDay = startDate.getDate();
     const endMonth = months[endDate.getMonth()];
     const endDay = endDate.getDate();
     return (
-      <TouchableOpacity onPress={() => { this.props.navigation.navigate('Class', { data, title:data.title }); }}>
-        <Row>
-          <View styleName="vertical stretch space-between">
-            <Title>{title}</Title>
-            <Caption><Caption styleName="bold">Instructor: </Caption><Caption>{ instructor }</Caption></Caption>
-            <Caption><Caption styleName="bold">Dates: </Caption><Caption >{startMonth} {startDay} - {endMonth} {endDay}</Caption></Caption>
-            <Caption><Caption styleName="bold">Time: </Caption><Caption >{day}, {classTime}</Caption></Caption>
-            <Caption><Caption styleName="bold">Spots Left: </Caption>{ openSpots }</Caption>
+      <TouchableOpacity onPress={() => navigation.navigate('Class', { data: data.item })}>
+        <View style={{
+          padding: 15, flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
+        }}
+        >
+          <View>
+            <Text style={{ marginBottom: 7 }}>{title}</Text>
+            <Meta data={{
+              instructor,
+              startMonth,
+              startDay,
+              endMonth,
+              endDay,
+              openSpots,
+              totalSpots,
+              day,
+              classTime
+            }}
+            />
           </View>
-          { isEnrolled &&
-            <Icon style={{ fontSize: 15, color: 'green' }} name="checkbox-on" />
+          { isEnrolled
+            && <Check />
           }
-        </Row>
-        <Divider styleName='line' />
+        </View>
+        <Divider type="line" />
       </TouchableOpacity>
     );
   }
 
-  render = () => {
-    if (!this.state.loading) {
+  render() {
+    const { loading, classes } = this.state;
+    if (!loading) {
       return (
-        <Screen>      
-          <ListView
-            data={this.state.classes}
-            renderRow={this.renderRow}
+        <Screen safeViewDisabled>
+          <FlatList
+            data={classes}
+            renderItem={this.renderClass}
           />
         </Screen>
-      )
+      );
     }
     return (
-      <Screen>
-        <View styleName='vertical fill-parent v-center h-center'>
-        <Spinner size="large" />
+      <Screen safeViewDisabled>
+        <View style={[globalStyles.vvCenter, globalStyles.vhCenter, { flex: 1 }]}>
+          <ActivityIndicator />
         </View>
       </Screen>
     );

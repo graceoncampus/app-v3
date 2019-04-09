@@ -1,13 +1,8 @@
-import React, { Component } from 'react';
-
+import React from 'react';
 import {
   View,
   Text,
-  StyleSheet,
-  Image,
-  TouchableHighlight,
-  TouchableOpacity,
-  Dimensions,
+  StyleSheet
 } from 'react-native';
 
 const TrackDetails = ({

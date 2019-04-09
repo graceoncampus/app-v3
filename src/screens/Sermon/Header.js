@@ -1,19 +1,17 @@
-import React, { Component } from 'react';
-
+import React from 'react';
 import {
   View,
   StyleSheet,
-  Image,
   TouchableOpacity,
 } from 'react-native';
+import { ArrowDown } from '../../icons';
 
 const Header = ({
   onDownPress
 }) => (
   <View style={styles.container}>
-    <TouchableOpacity onPress={onDownPress}>
-      <Image style={styles.button}
-        source={require('../../images/ic_keyboard_arrow_down_white.png')} />
+    <TouchableOpacity onPress={onDownPress} style={{ padding: 15 }}>
+      <ArrowDown />
     </TouchableOpacity>
   </View>
 );

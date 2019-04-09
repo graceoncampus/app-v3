@@ -1,27 +1,26 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { variables } from '../theme';
 
-export default class Button extends Component {
-  render() {
-
-    const style = {
-      backgroundColor: this.props.clear ? 'transparent' : variables.primary,
-      borderColor: this.props.clear ? variables.primary : 'transparent',
-      borderWidth: this.props.clear ? 1 : 0,
-      borderRadius: 6,
-      paddingHorizontal: 15,
-      paddingVertical: 15,
-      width: '100%',
-      height: 50,
-      ...this.props.style,
-    };
-    delete style.underlayColor;
-    return (
-      <TouchableOpacity
-        {...this.props}
-        style={style}
-      />
-    );
-  }
-}
+export default ({ style, clear, ...rest }) => {
+  const Style = {
+    backgroundColor: clear ? 'transparent' : variables.primary,
+    borderColor: clear ? variables.primary : 'transparent',
+    borderWidth: clear ? 1 : 0,
+    borderRadius: 6,
+    paddingHorizontal: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 15,
+    width: '100%',
+    height: 50,
+    ...style,
+  };
+  delete Style.underlayColor;
+  return (
+    <TouchableOpacity
+      {...rest}
+      style={Style}
+    />
+  );
+};

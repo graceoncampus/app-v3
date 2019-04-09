@@ -1,34 +1,32 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import {
   View,
   Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
+  StyleSheet
 } from 'react-native';
 import { ProgressComponent } from 'react-native-track-player';
 import Slider from 'react-native-slider';
 
-const minutesAndSeconds = (position) => ([
-  ('0' + Math.floor(position / 60)).slice(-2),
-  ('0' + Math.floor(position % 60)).slice(-2),
+const minutesAndSeconds = position => ([
+  (`0${Math.floor(position / 60)}`).slice(-2),
+  (`0${Math.floor(position % 60)}`).slice(-2),
 ]);
 
 class SeekBar extends ProgressComponent {
   render() {
-    const { onSlidingStart, onSeek } = this.props
+    const { onSlidingStart, onSeek } = this.props;
     const elapsed = minutesAndSeconds(this.state.position);
     const remaining = minutesAndSeconds(this.state.duration - this.state.position);
     return (
       <View style={styles.container}>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{ flexDirection: 'row' }}>
           <Text style={styles.text}>
-            {elapsed[0] + ":" + elapsed[1]}
+            {`${elapsed[0]}:${elapsed[1]}`}
           </Text>
-          <View style={{flex: 1}} />
-          <Text style={[styles.text, {width: 40}]}>
-            {this.state.duration > 1 && "-" + remaining[0] + ":" + remaining[1]}
+          <View style={{ flex: 1 }} />
+          <Text style={[styles.text, { width: 40 }]}>
+            {this.state.duration > 1 && `-${remaining[0]}:${remaining[1]}`}
           </Text>
         </View>
         <Slider
@@ -37,10 +35,11 @@ class SeekBar extends ProgressComponent {
           onSlidingComplete={onSeek}
           value={this.state.position}
           style={styles.slider}
-          minimumTrackTintColor='#fff'
-          maximumTrackTintColor='rgba(255, 255, 255, 0.14)'
+          minimumTrackTintColor="#fff"
+          maximumTrackTintColor="rgba(255, 255, 255, 0.14)"
           thumbStyle={styles.thumb}
-          trackStyle={styles.track}/>
+          trackStyle={styles.track}
+        />
       </View>
     );
   }
@@ -70,6 +69,6 @@ const styles = StyleSheet.create({
   text: {
     color: 'rgba(255, 255, 255, 0.72)',
     fontSize: 12,
-    textAlign:'center',
+    textAlign: 'center',
   }
 });

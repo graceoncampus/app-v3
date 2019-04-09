@@ -1,11 +1,34 @@
-import React, { Component } from 'react';
-import { TouchableOpacity } from 'react-native';
-import { View, Divider, Caption, Spinner, Subtitle, ScrollView, Tile, Title } from '@shoutem/ui';
-import { Screen } from '../../components';
-import { headerStyles } from '../../theme';
-import { Menu } from '../../icons';
+import React, { Component, Fragment } from 'react';
+import {
+  TouchableOpacity, View, ActivityIndicator, ScrollView, FlatList
+} from 'react-native';
 import firebase from 'react-native-firebase';
+import { Screen, Text, Divider } from '../../components';
+import globalStyles, { headerStyles } from '../../theme';
+import { Menu } from '../../icons';
 
+function renderRide(ride) {
+  const { car } = ride.item;
+  const riderNames = car.map(c => c.name);
+  riderNames.shift();
+  return (
+    <Fragment>
+      <View
+        style={[
+          globalStyles.horizontal,
+          globalStyles.vhStart,
+          globalStyles.spaceBetween,
+          { paddingVertical: 10, paddingHorizontal: 15, backgroundColor: ride.index % 2 === 0 ? '#fff' : '#F2F2F2' }]
+        }
+        key={ride.key}
+      >
+        <Text styleName="paragraph" style={{ textAlign: 'right' }}>{car[0].name}</Text>
+        <Text styleName="paragraph" style={{ textAlign: 'right' }}>{riderNames.join('\n')}</Text>
+      </View>
+      <Divider type="line" />
+    </Fragment>
+  );
+}
 export default class AllRides extends Component {
   static navigationOptions = ({ navigation }) => ({
     drawer: () => ({
@@ -26,93 +49,70 @@ export default class AllRides extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        allRidesData: {},
-        loading: true,
-        isRidesUp: null,
-    }
+      rides: [],
+      loading: true,
+      isRidesUp: null,
+    };
     this.ref = firebase.firestore().collection('rides').doc('current_rides').collection('cars');
     this.unsubscribe = null;
-}
+  }
 
-componentDidMount() { this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate); }
+  componentDidMount() { this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate); }
 
-componentWillUnmount() { this.unsubscribe(); }
+  componentWillUnmount() { this.unsubscribe(); }
 
-onCollectionUpdate = (querySnapshot) => {
-  const iMax = querySnapshot.docs.length;
-  if (querySnapshot.docs != 0) {
-    var i = 0;
-    const allRidesData = new Array(iMax);
-    for (; i < iMax; i += 1) {
-      const doc = querySnapshot.docs[i];
-      allRidesData[i] = doc.data().car;
-    }
-    this.setState({
-        allRidesData,
+  onCollectionUpdate = (querySnapshot) => {
+    const rides = [];
+    if (!querySnapshot.empty) {
+      querySnapshot.forEach((ride) => {
+        const { car } = ride.data();
+        rides.push({
+          key: ride.id,
+          car
+        });
+      });
+      this.setState({
+        rides,
         loading: false,
         isRidesUp: true,
-    });
-  }
-  else {
-    this.setState({
-      isRidesUp: false,
-      loading: false,
-    });
-  }
-}
-
-renderRides() {
-  const { allRidesData } = this.state;
-  return allRidesData.map((car, i) => {
-    var riderNames = [];
-    for(i = 1; i < car.length; i++) {
-      riderNames.push(car[i].name);
-    };
-    if (i % 2 === 0) {
-      return (
-        <View style={{ paddingVertical: 10, paddingHorizontal: 15, backgroundColor: '#fff' }} styleName='horizontal space-between v-start' key={i}>
-          <Subtitle style={{ textAlign: 'right' }}>{car[0].name}</Subtitle>
-          <Subtitle style={{ textAlign: 'right' }}>{riderNames.join('\n')}</Subtitle>
-        </View>
-      );
+      });
+    } else {
+      this.setState({
+        isRidesUp: false,
+        loading: false,
+      });
     }
-    return (
-      <View style={{ paddingVertical: 10, paddingHorizontal: 15 }} styleName='horizontal space-between v-start' key={i}>
-        <Subtitle style={{ textAlign: 'right' }}>{car[0].name}</Subtitle>
-        <Subtitle style={{ textAlign: 'right' }}>{riderNames.join('\n')}</Subtitle>
-      </View>
-    );
-  });
-}
+  }
 
-render = () => {
-  if (!this.state.loading && this.state.isRidesUp) {
-    return (
-      <Screen>
-        <Divider styleName="section-header">
-        <Caption>Driver</Caption>
-          <Caption>Riders</Caption>
+  render() {
+    const { loading, isRidesUp, rides } = this.state;
+    if (!loading && isRidesUp) {
+      return (
+        <Screen safeViewDisabled>
+          <Divider type="sectionHeader" style={{ paddingHorizontal: 15, paddingBottom: 5 }}>
+            <Text styleName="caption">Driver</Text>
+            <Text styleName="caption">Riders</Text>
           </Divider>
           <ScrollView>
-            {this.renderRides()}
+            <FlatList data={rides} renderItem={renderRide} style={{ paddingBottom: 30 }}/>
           </ScrollView>
         </Screen>
       );
     }
-  else if (!this.state.loading && !this.state.isRidesUp) {
-    return (
-      <Screen>
-        <Tile style={{ paddingBottom: 0, flex: 0.8, backgroundColor: 'transparent' }} styleName='text-centric'>
-        <Title>Rides for this Sunday are not up yet!</Title>
-                </Tile>
-              </Screen>
-    );
-  }
-    return (
-      <Screen>
-        <View styleName='vertical fill-parent v-center h-center'>
-          <Spinner size="large" />
+    if (!loading && !isRidesUp) {
+      return (
+        <Screen>
+          <View style={[globalStyles.vvCenter, globalStyles.vhCenter, { flex: 1, marginTop: -50 }]}>
+            <Text styleName="center subtitle" style={{ paddingHorizontal: 50 }}>Rides for this Sunday are not up yet!</Text>
           </View>
+        </Screen>
+      );
+    }
+    return (
+      <Screen>
+        <View style={[globalStyles.vvCenter, globalStyles.vhCenter, { flex: 1 }]}>
+          <ActivityIndicator />
+        </View>
       </Screen>
     );
   }

@@ -1,169 +1,154 @@
-
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { TouchableOpacity, View, StyleSheet } from 'react-native';
 import firebase from 'react-native-firebase';
+import { Agenda } from 'react-native-calendars';
 import { headerStyles } from '../theme';
 import { Menu } from '../icons';
-import { Screen } from '../components';
-import { Title, Caption, Text } from '@shoutem/ui';
-import { Agenda } from 'react-native-calendars'
+import { Screen, Text } from '../components';
 
 const gold = '#ae956b';
+
+const convert12hr = (date) => {
+  const res = date.split(':');
+  let hr = res[0];
+  let mer = ' AM';
+  if (hr > 12) {
+    hr -= 12;
+    mer = ' PM';
+  }
+  const final = `${hr}:${res[1]}${mer}`;
+  return final;
+};
+
+const loadItems = () => {
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+  let startYear = currentYear;
+  let endYear = currentYear + 1;
+  if (currentMonth < 7) {
+    startYear = currentYear - 1;
+    endYear = currentYear;
+  }
+  const startDate = new Date(`01 September ${startYear} 00:00 UTC`);
+  const endDate = new Date(`01 July ${endYear} 00:00 UTC`);
+  const dates = [];
+  let currentDate = startDate;
+  const addDays = function(days) {
+    const date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+  };
+  while (currentDate <= endDate) {
+    dates.push(currentDate.toISOString().split('T')[0]);
+    currentDate = addDays.call(currentDate, 1);
+  }
+  return dates;
+};
+
 export default class Calendar extends Component {
-    //Menu bar and title
-    static navigationOptions = ({ navigation }) => ({
-      drawer: () => ({
-        label: 'Calendar',
-      }),
-      title: 'CALENDAR',
-      headerLeft: (
-        <TouchableOpacity style={{ padding: 15 }} onPress={() => navigation.openDrawer()}>
-          <Menu />
-        </TouchableOpacity>
-      ),
-      headerRight: (
-        <View />
-      ),
-      ...headerStyles,
-    })
+  // Menu bar and title
+  static navigationOptions = ({ navigation }) => ({
+    drawer: () => ({
+      label: 'Calendar'
+    }),
+    title: 'CALENDAR',
+    headerLeft: (
+      <TouchableOpacity
+        style={{ padding: 15 }}
+        onPress={() => navigation.openDrawer()}
+      >
+        <Menu />
+      </TouchableOpacity>
+    ),
+    headerRight: <View />,
+    ...headerStyles
+  });
 
-    constructor(props) {
-        super(props);
-        this.ref = firebase.firestore().collection('calendar');  //fetch data from firestore
-        this.state = {
-            events: {},
-        };
-    }
+  constructor(props) {
+    super(props);
+    this.ref = firebase.firestore().collection('calendar'); // fetch data from firestore
+    const events = {};
+    const allDates = loadItems();
+    allDates.forEach((date) => { events[date] = []; });
+    this.state = {
+      events
+    };
+  }
 
-    componentDidMount() {
-        this.ref.onSnapshot(this.getCollection);
-    }
+  componentDidMount() {
+    this.ref.onSnapshot(this.getCollection);
+  }
 
-    getCollection = (querySnapshot) => {
-        //Get all event data from firestore
-        const len = querySnapshot.docs.length;
-        const items = [];
-        for (var i = 0; i < len; i++) {
-            const curEvent = querySnapshot.docs[i];
-            items[i] = {
-                key: curEvent.id,
-                ...curEvent.data(),
-            };
-        }
-        
-        //Fill the calendar with empty dates
-        var allDates = this.loadItems();
-        let dateObj = {};
-        for (var i in allDates) {
-            let date = allDates[i];
-            dateObj[date] = [];
-        }
-
-        //Put in non-empty dates 
-        for (var item in items[0]) {
-            if (item == "key")
-                continue;
-            let date = item;
-            let start = this.convert12hr(items[0][date]['0'].time);
-            let end = this.convert12hr(items[0][date]['0'].endtime);
-            let event = {
-                text: items[0][date]['0'].text,
-                time: start + " - " + end,
-                loc: items[0][date]['0'].location
-            }
-            
-            if (dateObj[date] && dateObj[date].length > 0) {
-                dateObj[date].push(event);
-            }
-            else {
-                dateObj[date] = [event];
-            }
-        }
-        this.setState({
-            events: dateObj,
+  getCollection = (querySnapshot) => {
+    const { events } = this.state;
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      Object.keys(data).forEach((date) => {
+        const eventsInfo = Object.values(data[date]).map((event) => {
+          const start = convert12hr(event.time);
+          const end = convert12hr(event.endtime);
+          return ({
+            text: event.text,
+            time: `${start} - ${end}`,
+            loc: event.location
+          });
         });
-    }
+        events[date] = eventsInfo;
+      });
+    });
+    this.setState({
+      events
+    });
+  };
 
-    loadItems() {
-        //Get empty dates to fill the calendar with
-        var startDate = new Date('01 October 2018 00:00 UTC');
-        var endDate = new Date('01 July 2019 00:00 UTC');
-        var dates = [],
-        currentDate = startDate,
-        addDays = function(days) {
-            var date = new Date(this.valueOf());
-            date.setDate(date.getDate() + days);
-            return date;
-        };
-        while (currentDate <= endDate) {
-            dates.push(currentDate.toISOString().split('T')[0]);
-            currentDate = addDays.call(currentDate, 1);
-        }
-        return dates;
-    }
 
-    convert12hr(date) {
-        var res = date.split(":")
-        var hr = res[0];
-        var mer = " AM"
-        if (hr > 12) {
-            hr = hr - 12;
-            mer = " PM";
-        }
-        var final = hr + ":" + res[1] + mer;
-        return final;
-    }
-
-    render = () => {
-        //display all events in calendar format
-        return (
-            <Screen>
-                <Agenda
-                    items={this.state.events}
-                    renderItem={(item) => {
-                        return (
-                            <View style={{
-                                backgroundColor: 'white',
-                                flex: 1,
-                                borderRadius: 5,
-                                padding: 10,
-                                marginRight: 10,
-                                marginTop: 17,
-                                height: item.height,
-                            }}>
-                                <Title style={{fontSize: 22}}>{item.text}</Title>
-                                <Caption style={{fontSize: 14}}>{item.time}</Caption>
-                                <Caption style={{fontSize: 14}}>{item.loc}</Caption>
-                            </View>);
-                    }}
-                    renderEmptyDate={() => {
-                        return(
-                            <View style={styles.emptyDate}></View>
-                        )
-                    }}
-                    rowHasChanged={(r1, r2) => {
-                        return r1.text !== r2.text
-                    }}
-                    theme={{
-                        todayTextColor: gold,
-                        selectedDayBackgroundColor: gold,
-                        dotColor: gold,
-                        agendaDayTextColor: gold,
-                        agendaDayNumColor: gold,
-                        agendaTodayColor: gold,
-                        agendaKnobColor: gold
-                      }}
-                />
-            </Screen>
-        )
-    }
+  render() {
+    const { events } = this.state;
+    return (
+    // display all events in calendar format
+      <Screen safeViewDisabled>
+        <Agenda
+          items={events}
+          renderItem={item => (
+            <View
+              style={{
+                backgroundColor: 'white',
+                flex: 1,
+                borderRadius: 5,
+                padding: 10,
+                marginRight: 10,
+                marginTop: 17,
+                height: item.height
+              }}
+            >
+              <Text style={{ marginBottom: 7 }}>{item.text}</Text>
+              <Text styleName="caption">{item.time}</Text>
+              <Text styleName="caption">{item.loc}</Text>
+            </View>
+          )}
+          renderEmptyDate={() => <View style={styles.emptyDate} />}
+          rowHasChanged={(r1, r2) => r1.text !== r2.text}
+          theme={{
+            todayTextColor: gold,
+            selectedDayBackgroundColor: gold,
+            dotColor: gold,
+            agendaDayTextColor: gold,
+            agendaDayNumColor: gold,
+            agendaTodayColor: gold,
+            agendaKnobColor: gold
+          }}
+        />
+      </Screen>
+    );
+  }
 }
 const styles = StyleSheet.create({
-    emptyDate: {
-        marginTop: 45,
-        marginRight: 10,
-        borderTopWidth: 1,
-        borderTopColor: '#dddddd',
-        height: 5,
-    }
-  });
+  emptyDate: {
+    marginTop: 45,
+    marginRight: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#dddddd',
+    height: 5
+  }
+});
