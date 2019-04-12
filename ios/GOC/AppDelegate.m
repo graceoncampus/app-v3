@@ -22,11 +22,11 @@
   [RNFirebaseNotifications configure];
   NSURL *jsCodeLocation;
   
-//  #ifdef DEBUG
-//    jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-//  #else
+  #ifdef DEBUG
+    jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  #else
     jsCodeLocation = [CodePush bundleURL];
-//  #endif
+  #endif
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"GOC"

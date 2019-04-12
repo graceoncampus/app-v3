@@ -290,21 +290,33 @@ class AuthLoadingScreen extends React.Component {
     const { navigation } = this.props;
     firebase.auth().onAuthStateChanged(async (user) => {
       const signedUp = await AsyncStorage.getItem('sign_up');
+      const token = await AsyncStorage.getItem('token');
       if (user && (!signedUp || signedUp === 'false')) {
         const firstLaunch = await AsyncStorage.getItem('first');
+        const hasPermission = await firebase.messaging().hasPermission();
         const ref = firebase
           .firestore()
           .collection('users')
           .doc(user.uid);
-        if (firstLaunch !== 'true') {
-          firebase
-            .messaging()
-            .hasPermission()
-            .then(hasPermission => !hasPermission && firebase.messaging().requestPermission());
+        if (hasPermission && !token) {
           firebase
             .messaging()
             .getToken()
             .then(Token => saveToken(Token));
+        }
+        if (firstLaunch !== 'true') {
+          if (!hasPermission) {
+            try {
+                await firebase.messaging().requestPermission();
+                firebase
+                  .messaging()
+                  .getToken()
+                  .then(Token => saveToken(Token))
+                  .catch(e => console.log(e));
+            } catch (error) {
+              console.log(error);
+            }            
+          }
           // const channel = new firebase.notifications.Android.Channel(
           //   'announcements',
           //   'announcements',

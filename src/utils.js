@@ -91,13 +91,14 @@ export const saveToken = (token) => {
       .then((snapshot) => {
         if (snapshot.exists) {
           const userData = snapshot.data();
-          const currentTokens = userData.tokens || { };
-          if (!currentTokens[token]) {
-            const tokens = { ...currentTokens, [token]: true };
-            userRef.update({ tokens });
+          const currentTokens = userData.tokens;
+          if (!currentTokens || !currentTokens.includes(token)) {
+            userRef.update({
+              tokens: firebase.firestore.FieldValue.arrayUnion(token)
+            });
           }
         }
-      });
+      }).catch(e => console.log(e));
   }
 };
 
@@ -107,19 +108,24 @@ export const signOut = async () => {
     const user = firebase.auth().currentUser;
     if (user && user._user) {
       const { _user: { uid } } = user;
+
       const userRef = firebase.firestore().collection('users').doc(uid);
-      const snapshot = await userRef.get();
-      if (snapshot.exists) {
-        const userData = snapshot.data();
-        const currentTokens = userData.tokens || { };
-        if (currentTokens[token]) {
-          const tokens = { ...currentTokens };
-          delete tokens[token];
-          await userRef.update({ tokens });
-          await AsyncStorage.removeItem('token');
+      try {
+        const snapshot = await userRef.get();
+        if (snapshot.exists) {
+          const userData = snapshot.data();
+          const currentTokens = userData.tokens;
+          if (currentTokens && currentTokens.includes(token)) {
+            await userRef.update({
+              tokens: firebase.firestore.FieldValue.arrayRemove(token)
+            });
+          }
         }
+      } catch (e) {
+        console.log(e)
       }
     }
+    AsyncStorage.removeItem('token');
   }
   firebase.notifications().setBadge(0);
   firebase.auth().signOut();

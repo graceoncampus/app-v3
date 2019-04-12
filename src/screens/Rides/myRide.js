@@ -53,9 +53,9 @@ export default class MyRide extends Component {
 
   onCollectionUpdate = (docs) => {
     if (docs.data()) {
-      const myRidersData = docs.data().car;
-      const myDriverData = myRidersData[0];
-      myRidersData.shift();
+      const car = docs.data();
+      const myRidersData = car.riders;
+      const myDriverData = car.driver;
       this.setState({
         myDriverData,
         myRidersData,

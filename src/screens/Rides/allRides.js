@@ -9,8 +9,7 @@ import { Menu } from '../../icons';
 
 function renderRide(ride) {
   const { car } = ride.item;
-  const riderNames = car.map(c => c.name);
-  riderNames.shift();
+  const riderNames = car.riders.map(c => c.name);
   return (
     <Fragment>
       <View
@@ -22,7 +21,7 @@ function renderRide(ride) {
         }
         key={ride.key}
       >
-        <Text styleName="paragraph" style={{ textAlign: 'right' }}>{car[0].name}</Text>
+        <Text styleName="paragraph" style={{ textAlign: 'right' }}>{car.driver.name}</Text>
         <Text styleName="paragraph" style={{ textAlign: 'right' }}>{riderNames.join('\n')}</Text>
       </View>
       <Divider type="line" />
@@ -65,12 +64,14 @@ export default class AllRides extends Component {
     const rides = [];
     if (!querySnapshot.empty) {
       querySnapshot.forEach((ride) => {
-        const { car } = ride.data();
+        const car = ride.data();
         rides.push({
           key: ride.id,
           car
         });
       });
+      const idx = rides.findIndex(r => r.car.driver.name === 'IN PROGRESS');
+      if (idx > -1) rides.splice(0, 0, rides.splice(idx, 1)[0]);
       this.setState({
         rides,
         loading: false,
@@ -94,7 +95,7 @@ export default class AllRides extends Component {
             <Text styleName="caption">Riders</Text>
           </Divider>
           <ScrollView>
-            <FlatList data={rides} renderItem={renderRide} style={{ paddingBottom: 30 }}/>
+            <FlatList data={rides} renderItem={renderRide} style={{ paddingBottom: 30 }} />
           </ScrollView>
         </Screen>
       );
