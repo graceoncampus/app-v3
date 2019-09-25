@@ -21,6 +21,9 @@ export default class RidesTab extends Component {
         <Menu />
       </TouchableOpacity>
     ),
+    headerRight: (
+      <View />
+    ),
     ...headerStyles
   });
 

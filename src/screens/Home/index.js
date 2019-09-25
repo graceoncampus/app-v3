@@ -6,7 +6,7 @@ import firebase from 'react-native-firebase';
 
 import Announcement from './announcement';
 import { Menu, New } from '../../icons';
-import { Screen } from '../../components';
+import { Screen, Text } from '../../components';
 import globalStyles, { headerStyles } from '../../theme';
 
 export default class Home extends Component {
@@ -110,9 +110,22 @@ export default class Home extends Component {
       <Screen safeViewDisabled>
         {
           !loading ? (
-            <Screen safeViewDisabled>
-              <FlatList data={posts} renderItem={this.renderAnnouncement} />
-            </Screen>
+            posts.length > 0 ? (
+              <Screen safeViewDisabled>
+                <FlatList data={posts} renderItem={this.renderAnnouncement} />
+              </Screen>
+            )
+            : (
+              <View style={[
+                globalStyles.vertical,
+                globalStyles.vvCenter,
+                globalStyles.vhCenter,
+                globalStyles.fillParent,
+              ]}
+              >
+                <Text>No new announcements!</Text>
+              </View>
+            )
           )
             : (
               <View style={[

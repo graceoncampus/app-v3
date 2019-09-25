@@ -98,7 +98,7 @@ export default class Events extends Component {
       return (
         <Screen>
           <View style={{ paddingBottom: 0, flex: 0.8, backgroundColor: 'transparent' }} styleName="text-centric">
-            <Text>Looks like there's no upcoming events!</Text>
+            <Text>No upcoming events!</Text>
           </View>
         </Screen>
       );
