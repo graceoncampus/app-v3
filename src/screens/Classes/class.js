@@ -1,6 +1,9 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import {
-  TouchableOpacity, Alert, ScrollView, View
+  TouchableOpacity, 
+  Alert, 
+  ScrollView, 
+  View
 } from 'react-native';
 import firebase from 'react-native-firebase';
 import LinearGradient from 'react-native-linear-gradient';

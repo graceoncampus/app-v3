@@ -1,6 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
-  View, TouchableOpacity, ActivityIndicator, FlatList
+  View, 
+  TouchableOpacity, 
+  ActivityIndicator, 
+  FlatList
 } from 'react-native';
 import firebase from 'react-native-firebase';
 

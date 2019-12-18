@@ -1,6 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
-  TouchableOpacity, TextInput, View, Alert, ActivityIndicator
+  TouchableOpacity, 
+  TextInput, 
+  View,
+  Alert, 
+  ActivityIndicator
 } from 'react-native';
 import CheckBox from 'react-native-check-box';
 import firebase from 'react-native-firebase';

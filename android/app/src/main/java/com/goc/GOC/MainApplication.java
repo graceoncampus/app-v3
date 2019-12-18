@@ -1,15 +1,10 @@
 package com.goc.GOC;
 
 import android.app.Application;
+import android.content.Context;
+import com.facebook.react.PackageList;
 
 import com.facebook.react.ReactApplication;
-import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
-import com.guichaguri.trackplayer.TrackPlayer;
-import com.horcrux.svg.SvgPackage;
-import org.devio.rn.splashscreen.SplashScreenReactPackage;
-import com.BV.LinearGradient.LinearGradientPackage;
-import com.microsoft.codepush.react.CodePush;
-import com.oblador.vectoricons.VectorIconsPackage;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.auth.RNFirebaseAuthPackage;
 import io.invertase.firebase.firestore.RNFirebaseFirestorePackage;
@@ -18,12 +13,11 @@ import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import io.invertase.firebase.functions.RNFirebaseFunctionsPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
-import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import com.microsoft.codepush.react.ReactInstanceHolder;
-import com.dylanvann.fastimage.FastImageViewPackage;
 
 
 public class MainApplication extends Application implements ReactApplication {
@@ -52,7 +46,6 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
         new TrackPlayer(),
         new MainReactPackage(),
-            new RNGestureHandlerPackage(),
         new CodePush("yeqaqYL4qIOT2uwxNecL9bkS3l85449c462d-8670-4950-b4c5-22e82dc7fad3", MainApplication.this, BuildConfig.DEBUG),
         new FastImageViewPackage(),
         new SvgPackage(),

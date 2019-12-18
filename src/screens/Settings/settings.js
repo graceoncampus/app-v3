@@ -1,6 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
-  View, TextInput, TouchableOpacity, Alert, ActivityIndicator
+  View, 
+  TextInput, 
+  TouchableOpacity, 
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import firebase from 'react-native-firebase';

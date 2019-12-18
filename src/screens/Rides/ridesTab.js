@@ -1,5 +1,8 @@
-import React, { Component } from 'react';
-import { TouchableOpacity, ActivityIndicator, View } from 'react-native';
+import React from 'react';
+import { 
+  TouchableOpacity, 
+  ActivityIndicator, 
+  View } from 'react-native';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import firebase from 'react-native-firebase';
 import { Screen } from '../../components';

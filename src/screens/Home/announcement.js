@@ -1,6 +1,9 @@
 import React from 'react';
 import {
-  TouchableOpacity, Linking, View, Image
+  TouchableOpacity, 
+  Linking, 
+  View, 
+  Image
 } from 'react-native';
 
 import { Text } from '../../components';

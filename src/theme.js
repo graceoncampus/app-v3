@@ -1,4 +1,9 @@
-import { StyleSheet, Platform } from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  ScrollView,
+  StatusBar,
+} from 'react-native';
 
 export const variables = {
   primary: '#ae956b',

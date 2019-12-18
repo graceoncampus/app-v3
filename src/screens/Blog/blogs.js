@@ -1,6 +1,9 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import {
-  TouchableOpacity, FlatList, View, ActivityIndicator
+  TouchableOpacity, 
+  FlatList, 
+  View, 
+  ActivityIndicator
 } from 'react-native';
 import { AllHtmlEntities } from 'html-entities';
 import FastImage from 'react-native-fast-image';

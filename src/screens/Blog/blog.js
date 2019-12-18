@@ -1,6 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
-  TouchableOpacity, ScrollView, Dimensions, View
+  TouchableOpacity, 
+  ScrollView, 
+  Dimensions, 
+  View
 } from 'react-native';
 import HTMLView from 'react-native-htmlview';
 import FastImage from 'react-native-fast-image';

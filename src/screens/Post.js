@@ -1,5 +1,8 @@
-import React, { Component } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { 
+  TouchableOpacity, 
+  View 
+} from 'react-native';
 import { Screen } from '../components';
 
 import globalStyles, { headerStyles } from '../theme';

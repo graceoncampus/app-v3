@@ -1,6 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
-  TouchableOpacity, ScrollView, Linking, View, Dimensions
+  TouchableOpacity, 
+  ScrollView, 
+  Linking, 
+  View, 
+  Dimensions
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { headerStyles } from '../../theme';

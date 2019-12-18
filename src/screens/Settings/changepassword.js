@@ -1,6 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
-  ActivityIndicator, View, TextInput, TouchableOpacity, Alert
+  ActivityIndicator, 
+  View, 
+  TextInput, 
+  TouchableOpacity, 
+  Alert
 } from 'react-native';
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';

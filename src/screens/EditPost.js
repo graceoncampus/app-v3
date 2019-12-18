@@ -1,6 +1,11 @@
 import React from 'react';
 import {
-  TouchableOpacity, TextInput, View, Alert, Image, Dimensions
+  TouchableOpacity, 
+  TextInput, 
+  View, 
+  Alert, 
+  Image, 
+  Dimensions
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import firebase from 'react-native-firebase';

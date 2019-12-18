@@ -1,5 +1,9 @@
-import React, { Component, Fragment } from 'react';
-import { TouchableOpacity, View, FlatList } from 'react-native';
+import React, { Fragment } from 'react';
+import { 
+  TouchableOpacity, 
+  View, 
+  FlatList 
+} from 'react-native';
 import { Screen, Divider, Text } from '../../components';
 import globalStyles, { headerStyles } from '../../theme';
 import { Back, Chevron } from '../../icons';

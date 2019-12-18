@@ -1,5 +1,9 @@
-import React, { Component } from 'react';
-import { TouchableOpacity, View, StyleSheet } from 'react-native';
+import React from 'react';
+import { 
+  TouchableOpacity, 
+  View, 
+  StyleSheet 
+} from 'react-native';
 import firebase from 'react-native-firebase';
 import { Agenda } from 'react-native-calendars';
 import { headerStyles } from '../theme';

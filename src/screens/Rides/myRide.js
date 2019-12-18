@@ -1,6 +1,9 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import {
-  TouchableOpacity, View, ActivityIndicator, FlatList
+  TouchableOpacity,
+  View, 
+  ActivityIndicator, 
+  FlatList
 } from 'react-native';
 import firebase from 'react-native-firebase';
 import { Screen, Text, Divider } from '../../components';
