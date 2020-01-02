@@ -39,13 +39,22 @@ target 'GOC' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  pod 'GoogleAppMeasurement', '~> 6.0.3'
-  pod 'Firebase/Core', '~> 6.4.0'
-  pod 'Firebase/Auth', '~> 6.4.0'
-  pod 'Firebase/Firestore', '~> 6.4.0'
-  pod 'Firebase/Messaging', '~> 6.4.0'
-  pod 'Firebase/Functions', '~> 6.4.0'
+  pod 'GoogleAppMeasurement', '~> 6.1.6'
+  pod 'Firebase/Core', '~> 6.13.0'
+  pod 'Firebase/Auth', '~> 6.13.0'
+  pod 'Firebase/Firestore', '~> 6.13.0'
+  pod 'Firebase/Messaging', '~> 6.13.0'
+  pod 'Firebase/Functions', '~> 6.13.0'
 
   use_native_modules!
 end
 
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    if ['react-native-track-player'].include? target.name
+      target.build_configurations.each do |config|
+        config.build_settings['SWIFT_VERSION'] = '5'
+      end
+    end
+  end
+end
