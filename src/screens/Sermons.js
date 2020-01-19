@@ -3,6 +3,7 @@ import TrackPlayer from 'react-native-track-player';
 import {
   TouchableOpacity, ActivityIndicator, Text, FlatList, View
 } from 'react-native';
+import { SearchBar } from 'react-native-elements';
 import firebase from 'react-native-firebase';
 
 import globalStyles, { headerStyles } from '../theme';
@@ -37,6 +38,8 @@ export default class Sermons extends React.Component {
     this.state = {
       loading: true,
       feed: [],
+      searchText: '',
+      searchResults: [],
       ...store.getState()
     };
   }
@@ -120,6 +123,14 @@ export default class Sermons extends React.Component {
     }
   };
 
+  updateSearch = async searchText => {
+    searchText = searchText.toLowerCase();
+    this.setState(prevState => ({
+      searchText,
+      searchResults: prevState.feed.filter(({ title, artist, passage }) => title.toLowerCase().includes(searchText) || artist.toLowerCase().includes(searchText) || passage.toLowerCase().includes(searchText)),
+    }));
+  };
+
   renderSermon = (row) => {
     const sermon = row.item;
     const date = new Date(sermon.date.toString());
@@ -147,11 +158,19 @@ export default class Sermons extends React.Component {
 
   render() {
     const { navigation } = this.props;
-    const { loading, feed } = this.state;
+    const { loading, feed, searchText, searchResults } = this.state;
     if (!loading) {
       return (
         <Screen>
-          <FlatList data={feed} renderItem={this.renderSermon} onEndReached={this.loadPage} />
+          <SearchBar
+            placeholder="Search sermons..."
+            onChangeText={this.updateSearch}
+            value={searchText}
+            containerStyle={{ backgroundColor: 'white' }}
+            inputContainerStyle={{ backgroundColor: 'white' }}
+            lightTheme
+          />
+          <FlatList data={searchText ? searchResults : feed} renderItem={this.renderSermon} onEndReached={this.loadPage} />
           <Player navigation={navigation} onTogglePlayback={this.togglePlayback} />
         </Screen>
       );
