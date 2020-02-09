@@ -52,11 +52,15 @@ export default class Sermons extends React.Component {
         TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS
       ]
     });
-    store.subscribe((state) => {
+    this.unsubscribe = store.subscribe((state) => {
       this.setState({
         ...state
       });
     });
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
   }
 
   loadPage = () => {
