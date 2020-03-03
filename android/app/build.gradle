@@ -125,7 +125,7 @@ android {
             targetCompatibility JavaVersion.VERSION_1_8
         }
     }
-    
+
     splits {
         abi {
             reset()
@@ -160,13 +160,14 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation fileTree(dir: "libs", include: ["*.jar"])
     // implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-    
+
     implementation project(path: ':react-native-firebase', configuration: 'default')
-    implementation "com.google.firebase:firebase-core:16.0.3"
-    implementation "com.google.firebase:firebase-auth:16.0.3"
+    implementation "com.google.firebase:firebase-core:16.0.4"
+    implementation 'com.google.firebase:firebase-analytics:16.0.4'
+    implementation "com.google.firebase:firebase-auth:16.0.4"
     implementation "com.google.firebase:firebase-firestore:17.1.0"
-    implementation "com.google.firebase:firebase-messaging:17.3.2"
-    implementation "com.google.firebase:firebase-functions:16.1.3"
+    implementation "com.google.firebase:firebase-messaging:17.3.3"
+    implementation "com.google.firebase:firebase-functions:16.1.1"
     implementation "com.google.android.gms:play-services-base:16.0.1"
     implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
     implementation project(':react-native-code-push')
@@ -186,4 +187,4 @@ task copyDownloadableDepsToLibs(type: Copy) {
 }
 apply plugin: 'com.google.gms.google-services'
 
-com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true
+// com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true
