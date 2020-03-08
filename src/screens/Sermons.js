@@ -128,10 +128,9 @@ export default class Sermons extends React.Component {
   };
 
   updateSearch = async searchText => {
-    searchText = searchText.toLowerCase();
     this.setState(prevState => ({
-      searchText,
-      searchResults: prevState.feed.filter(({ title, artist, passage }) => title.toLowerCase().includes(searchText) || artist.toLowerCase().includes(searchText) || passage.toLowerCase().includes(searchText)),
+      searchText: searchText,
+      searchResults: prevState.feed.filter(({ title, artist, passage }) => title.toLowerCase().includes(searchText.toLowerCase()) || artist.toLowerCase().includes(searchText.toLowerCase()) || passage.toLowerCase().includes(searchText.toLowerCase())),
     }));
   };
 
