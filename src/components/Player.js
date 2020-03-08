@@ -43,9 +43,13 @@ export default class Player extends Component {
   }
 
   componentDidMount() {
-    store.subscribe(state => this.setState({
+    this.unsubscribe = store.subscribe(state => this.setState({
       ...state,
     }));
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
   }
 
   navigate = () => {
